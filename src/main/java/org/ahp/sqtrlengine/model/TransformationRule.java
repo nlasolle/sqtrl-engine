@@ -25,6 +25,9 @@ public class TransformationRule {
 	//Rule transformation cost to prevent application of the rule given a maximum process cost
 	private float cost; 
 	
+	//TO DO remove this field
+	private String type;
+	
 	//Rule explanation template, whose instantiation can reused variables from context, left, right fields
 	private String explanation; 
 	
@@ -120,5 +123,13 @@ public class TransformationRule {
 			&& transformationRule.getRight().equals(this.right)
 			&& transformationRule.getContext().equals(this.context) ;
 		
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }
