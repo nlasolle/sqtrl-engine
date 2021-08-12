@@ -1,1 +1,0 @@
-File under a .txt extension for testing purpose.

@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
-import org.ahp.sqtrlengine.exception.RuleException;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.apache.commons.io.FilenameUtils;
 import org.jdom2.Document;
@@ -30,8 +29,10 @@ public class XMLRuleParser implements RuleParser {
 		if(!ruleFile.exists()) {
 			throw new FileNotFoundException();
 		}
-
-		if(!FilenameUtils.getExtension(ruleFile.getPath()).equals("xml")) {
+		
+		String ext = FilenameUtils.getExtension(ruleFile.getPath());
+		
+		if(ext == null || !ext.equals("xml")) {
 			throw new InvalidFileTypeException(ruleFile.getPath(), "xml");
 		}
 

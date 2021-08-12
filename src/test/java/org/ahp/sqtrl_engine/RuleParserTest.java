@@ -8,6 +8,8 @@ import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Test the class dedicated to the parsing of transformation rule file
@@ -17,9 +19,20 @@ import org.junit.jupiter.api.Test;
 class RuleParserTest {
 
 	@Test
-	void testXMLFileNotFound() {
+	void testNullFile() {
 
-		File nonExistingFile = new File("nonExistingFileName.xml");
+		XMLRuleParser parser = new XMLRuleParser();
+
+		Assertions.assertThrows(NullPointerException.class, () -> {
+			parser.isRuleFileValid(null);
+		});
+	}
+	
+	@ParameterizedTest
+	@ValueSource(strings = {"", "nonExistingFileName.xml"})
+	void testXMLFileNotFound(String fileName) {
+
+		File nonExistingFile = new File(fileName);
 
 		XMLRuleParser parser = new XMLRuleParser();
 
@@ -28,10 +41,10 @@ class RuleParserTest {
 		});
 	}
 
-	@Test
-	void testInvalidFileType() {
-		String invalidFileName = "InvalidFile.txt";
-		File invalidFile = new File(getClass().getClassLoader().getResource(invalidFileName).getFile());
+	@ParameterizedTest
+	@ValueSource(strings = {"rules.txt", "rules.json", "rules", ""})
+	void testInvalidFileType(String fileName) {
+		File invalidFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser();
 
@@ -40,22 +53,20 @@ class RuleParserTest {
 		});
 	}
 
-	@Test
-	void testInvalidRuleFile() throws FileNotFoundException, InvalidFileTypeException {
-		String invalidFileName = "invalidRules.xml";
-
-		File invalidFile = new File(getClass().getClassLoader().getResource(invalidFileName).getFile());
+	@ParameterizedTest
+	@ValueSource(strings = {"invalidRules.xml"})
+	void testInvalidRuleFile(String fileName) throws FileNotFoundException, InvalidFileTypeException {
+		File invalidFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser();
 
 		Assertions.assertFalse(parser.isRuleFileValid(invalidFile));
 	}
 
-	@Test
-	void testValidRuleFile() throws FileNotFoundException, InvalidFileTypeException {
-		String validFileName = "validRules.xml";
-
-		File validFile = new File(getClass().getClassLoader().getResource(validFileName).getFile());
+	@ParameterizedTest
+	@ValueSource(strings = {"validRules.xml"})
+	void testValidRuleFile(String fileName) throws FileNotFoundException, InvalidFileTypeException {
+		File validFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser();
 

@@ -1,0 +1,7 @@
+SELECT ?title
+WHERE
+{
+  <http://example.org/book/book1> <http://purl.org/dc/elements/1.1/title> ?title .
+  <http://example.org/book/book1> <http://purl.org/dc/elements/1.1/contributor> "Jonas main" .
+  FILTER(?title = "Toto")
+}
