@@ -1,7 +1,7 @@
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX ex: <http://ex.com/>
 
-SELECT ?book ?title
+SELECT ?book (COUNT(?book) AS ?nb)
 WHERE
 {
   ?book dc:title ?title .
@@ -10,3 +10,4 @@ WHERE
   ?book ?other ?title .
   FILTER(?author = "Hermann Heisse" && ?title = "Tata")
 }
+GROUP BY ?book

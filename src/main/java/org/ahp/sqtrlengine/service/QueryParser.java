@@ -12,6 +12,7 @@ import org.ahp.sqtrlengine.model.SelectClause;
 import org.ahp.sqtrlengine.model.TriplePattern;
 import org.ahp.sqtrlengine.model.WhereClause;
 import org.ahp.sqtrlengine.utils.QueryUtils;
+import org.apache.jena.graph.Triple;
 
 /**
  * Parse a SPARQL query and save it as an object
@@ -92,8 +93,12 @@ public class QueryParser {
 			}
 		}
 		
-		QueryUtils.extractTriplesPath(queryString);
+		List<Triple> triples = QueryUtils.extractTriplePatterns(QueryUtils.parseQuery(queryString));
+		for(Triple t : triples) {
+			System.out.println(t);
+		}
 		
+		QueryUtils.extractFilters(QueryUtils.parseQuery(queryString));
 		WhereClause whereClause = new WhereClause();
 		whereClause.setGraphPattern(graphPattern);
 		

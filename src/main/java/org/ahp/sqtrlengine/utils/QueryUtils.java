@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.ahp.sqtrlengine.model.Filter;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
@@ -20,14 +23,36 @@ import org.apache.jena.sparql.syntax.ElementWalker;
 public class QueryUtils {
 
 	/**
+	 * Return a Jena Query representation based on a query string
+	 * @param queryString the input query as a string
+	 * @return a Query object
+	 */
+	public static Query parseQuery(String queryString) {
+		return QueryFactory.create(queryString);
+	}
+	
+	
+	/**
+	 * Extract requested var (within SELECT clause)
+	 * @return
+	 */
+	public static List<Var> extractSelectVariables(Query query) {
+
+		System.out.println(query.getGroupBy());
+		System.out.println(query.getLimit());
+		System.out.println(query.isDistinct());
+		System.out.println("VARS " + query.getResultVars());
+		return query.getProjectVars();
+	}
+	
+	/**
 	 * Extract triples patterns from a query
 	 * @return
 	 */
-	public static List<Triple>  extractTriplesPath(String queryString) {
+	public static List<Triple>  extractTriplePatterns(Query query) {
 		final List<Triple> triples = new ArrayList<Triple>();
 
-		Query query = QueryFactory.create(queryString);
-		System.out.println("Prologue " + query.getQueryPattern());
+
 		ElementWalker.walk(query.getQueryPattern(),
 				new ElementVisitorBase() {
 
@@ -37,13 +62,27 @@ public class QueryUtils {
 
 				for( ;  triplesIterator.hasNext() ;) {
 					TriplePath path = triplesIterator.next();
-					System.out.println(path);
-					triples.add(new Triple(path.getSubject(), 
-							path.getPredicate(), 
-							path.getObject()));
+					
+					triples.add(path.asTriple());
 				}
 			}});
-	
+
 		return triples;
 	}
+
+	public static List<ElementFilter> extractFilters(Query query) {
+		List<ElementFilter> filters = new ArrayList<ElementFilter>();
+		
+		ElementWalker.walk(query.getQueryPattern(),
+				new ElementVisitorBase() {
+
+			@Override
+			public void visit(ElementFilter el) {
+				filters.add(el);
+			}});
+		
+		return filters;
+	}
+
+
 }

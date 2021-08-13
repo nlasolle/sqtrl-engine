@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.ahp.sqtrlengine.model.Query;
 import org.ahp.sqtrlengine.service.QueryParser;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,7 +22,7 @@ class QueryParserTest {
 	@ValueSource(strings = {"queries/SelectTestQuery1.rq", 
 			"queries/SelectTestQuery2.rq",
 			"queries/WhereTestQuery1.rq",
-			"queries/WhereTestQuery2.rq"})
+	"queries/WhereTestQuery2.rq"})
 	void testBasicValidQuery(String fileName) {
 		String queryString;
 		try {
@@ -29,6 +30,35 @@ class QueryParserTest {
 					StandardCharsets.UTF_8);
 			Query query = QueryParser.parseQuery(queryString);
 			System.out.println(query);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"queries/WhereTestQuery2.rq"})
+	void testMultipleFilterQuery(String fileName) {
+		String queryString;
+		try {
+			queryString = Resources.toString(getClass().getClassLoader().getResource(fileName),
+					StandardCharsets.UTF_8);
+			Query query = QueryParser.parseQuery(queryString);
+			System.out.println(query);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"queries/WhereTestQuery2.rq",
+			"queries/WhereTestQuery3.rq"
+	})
+	void testSelectExpExtraction(String fileName) {
+		String queryString;
+		try {
+			queryString = Resources.toString(getClass().getClassLoader().getResource(fileName),
+					StandardCharsets.UTF_8);
+			QueryUtils.extractSelectVariables(QueryUtils.parseQuery(queryString));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
