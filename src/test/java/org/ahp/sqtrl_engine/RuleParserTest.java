@@ -81,7 +81,6 @@ class RuleParserTest {
 	
 	@ParameterizedTest
 	@CsvSource({"validRules.xml, 12"})
-	//@ValueSource(strings = {"validRules.xml"}, ints = {14})
 	void testRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {
 		File validFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
@@ -94,5 +93,4 @@ class RuleParserTest {
 		Assertions.assertEquals(rules.size(), numberOfRules);;
 
 	}
-
 }

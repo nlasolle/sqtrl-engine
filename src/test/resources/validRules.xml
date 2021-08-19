@@ -15,7 +15,7 @@
 			<right>?x ?p ?D</right>
 			<cost>5.0</cost>
 			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
-			<exception>?C = ?D</exception>
+			<exception>FILTER(?C != ?D)</exception>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
