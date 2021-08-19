@@ -97,8 +97,8 @@ public class TransformationRule {
 	
 	@Override
 	public String toString(){
-		return "Transformation rule " + iri + "{" +
-				"\n\tLabel = " + label +
+		return "Transformation rule " + iri + " {" +
+				"\n\tlabel = " + label +
 				"\n\tcontext = " + context +
 				"\n\tleft = " + left +
 				"\n\tright = " + right +
