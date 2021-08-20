@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.ahp.sqtrlengine.model.Filter;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
@@ -54,6 +54,31 @@ public class QueryUtils {
 
 
 		ElementWalker.walk(query.getQueryPattern(),
+				new ElementVisitorBase() {
+
+			@Override
+			public void visit(ElementPathBlock el) {
+				ListIterator<TriplePath> triplesIterator = el.getPattern().iterator();
+
+				for( ;  triplesIterator.hasNext() ;) {
+					TriplePath path = triplesIterator.next();
+					
+					triples.add(path.asTriple());
+				}
+			}});
+
+		return triples;
+	}
+	
+	/**
+	 * Extract triples patterns from an element
+	 * @return
+	 */
+	public static List<Triple>  extractTriplePatterns(Element element) {
+		final List<Triple> triples = new ArrayList<Triple>();
+
+
+		ElementWalker.walk(element,
 				new ElementVisitorBase() {
 
 			@Override

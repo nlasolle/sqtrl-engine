@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.RuleApplyer;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
@@ -46,13 +48,29 @@ public class RuleApplicationTest {
 
 
 		RuleApplyer ruleApplyer = new RuleApplyer();
-		ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
+		List<HashMap<String, String>> bindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
+		System.out.println(bindings);
 
 	}
 	
 	@ParameterizedTest
+	@ValueSource(strings = {"http://sqtrl-rules/generic/1"})
+	void testLeftBind(String ruleIri) throws IOException {
+
+		TransformationRule rule = rules.stream()
+				.filter(r -> r.getIri().equals(ruleIri))
+				.findAny()
+				.orElse(null);
+
+
+		RuleApplyer ruleApplyer = new RuleApplyer();
+		List<HashMap<String, String>> bindings = null;
+		//ruleApplyer.bindLeftMember(rule, bindings );
+	}
+	
+	@ParameterizedTest
 	@CsvSource({"http://sqtrl-rules/generic/1, queries/ObjGenQuery.rq"})
-	void testLeftMapping(String ruleIri, String queryFile) throws IOException {
+	void testFullRuleApplication(String ruleIri, String queryFile) throws IOException {
 
 		TransformationRule rule = rules.stream()
 				.filter(r -> r.getIri().equals(ruleIri))
@@ -61,9 +79,21 @@ public class RuleApplicationTest {
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
-
+		
 		RuleApplyer ruleApplyer = new RuleApplyer();
-		ruleApplyer.mapLeftMember(rule, query);
+		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
+		
+		List<String> boundLeft = ruleApplyer.bindLeftMember(rule, contextBindings);
 
+		
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
+		System.out.println("--- Rule applications ---");
+		System.out.println(ruleApplications);
+		/*for(RuleApplication application : ruleApplications) {
+			System.out.println(application.getRuleIri());
+			System.out.println(application.getContextBinding());
+			System.out.println(application.getLeftBinding());
+		}*/
+		
 	}
 }
