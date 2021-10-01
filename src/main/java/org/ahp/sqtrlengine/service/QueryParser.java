@@ -13,6 +13,8 @@ import org.ahp.sqtrlengine.model.TriplePattern;
 import org.ahp.sqtrlengine.model.WhereClause;
 import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.graph.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Parse a SPARQL query and save it as an object
@@ -20,6 +22,8 @@ import org.apache.jena.graph.Triple;
  *
  */
 public class QueryParser {
+
+	private static final Logger logger = LogManager.getLogger(QueryParser.class);
 
 	/**
 	 * Is the SPARQL query under valid syntax ?
@@ -95,7 +99,7 @@ public class QueryParser {
 		
 		List<Triple> triples = QueryUtils.extractTriplePatterns(QueryUtils.parseQuery(queryString));
 		for(Triple t : triples) {
-			System.out.println(t);
+			logger.info(t);
 		}
 		
 		QueryUtils.extractFilters(QueryUtils.parseQuery(queryString));

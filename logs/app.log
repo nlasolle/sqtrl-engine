@@ -1,0 +1,106 @@
+2021-10-01 09:20:17,525 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-10-01 09:23:27,073 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-10-01 09:23:44,082 INFO o.a.s.s.XMLRuleParser [main] Info ppp
+2021-10-01 09:23:44,082 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-10-01 09:24:20,341 INFO o.a.s.s.XMLRuleParser [main] Info ppp
+2021-10-01 09:24:20,341 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-10-01 09:24:20,341 DEBUG o.a.s.s.XMLRuleParser [main] debug 555
+2021-10-01 09:34:01,708 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-10-01 09:42:21,102 INFO o.a.s.RuleParserTest [main] [http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C rdfs:subClassOf ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C rdfs:subClassOf ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/3 {
+	label = Generalize predicate
+	context = ?p rdfs:subPropertyOf ?q
+	left = ?x ?p ?y
+	right = ?x ?q ?y
+	exceptions = []
+	cost = 2.0
+	explanation = Generalize ?p in ?q
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = ?x ?p ?y
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Forgetting triple ?x ?p ?y
+}, http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l ahpo:sentBy ?x . ?l ahpo:sentTo ?y
+	right = ?l ahpo:sentBy ?y . ?l ahpo:sentTo ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of letters
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l1 ahpo:sentBy ?x . ?l1 ahpo:citeName ?y
+	right = ?l1 ahpo:sentBy ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing one of the correspondent by one of the quoted persons
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l1 ahpo:sentTo ?x . ?l1 ahpo:citeName ?y
+	right = ?l1 ahpo:sentTo ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing one of the correspondent by one of the quoted persons
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject
+	context = ?l2 dcterms:subject ?x . ?l2 dcterms:subject ?y
+	left = ?l1 dcterms:subject ?x
+	right = ?l1 dcterms:subject ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing a subject by another related subject
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace sender
+	context = ?l1 dcterms:subject ?s . ?l2 ahpo:correspondent ?y . ?l2 dcterms:subject ?s
+	left = ?l1 ahpo:correspondent ?x
+	right = ?l1 ahpo:correspondent ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent by another correspondent related to the subject
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l1 ahpo:correspondent ?x
+	right = ?l1 ahpo:citeName ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove the correspondent and place it as one of the quoted persons
+}, http://sqtrl-rules/ahpo/7 {
+	label = Replace the place of archive
+	context = ?l1 ahpo:archivedAt ?x . ?l1 ahpo:hasAddress ?a1 . ?a1 ahpo:town ?t1 . ?l2 ahpo:archivedAt ?y . ?l2 ahpo:hasAddress ?a2 . ?a2 ahpo:town ?t1
+	left = ?l1 ahpo:archivedAt ?x
+	right = ?l1 ahpo:archivedAt ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the place of archive by another place of archives located in the same city
+}, http://sqtrl-rules/ahpo/8 {
+	label = Replace subject with place related subject
+	context = ?l1 ahpo:archivedAt ?x . ?l1 dcterms:subject ?s1 . ?l2 ahpo:archivedAt ?x . ?l2 dcterms:subject ?s2
+	left = ?l1 dcterms:subject ?s1
+	right = ?l1 dcterms:subject ?s2
+	exceptions = []
+	cost = 2.0
+	explanation = Replace the subject by another subject of letters archived within the same place
+}]
+2021-10-01 09:42:21,197 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.

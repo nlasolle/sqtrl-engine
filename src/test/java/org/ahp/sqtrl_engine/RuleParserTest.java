@@ -10,6 +10,8 @@ import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,11 +19,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Test the class dedicated to the parsing of transformation rule file
+ * Test the class dedicated to the parsing of transformation rule files
  * @author Nicolas Lasolle
  *
  */
 class RuleParserTest {
+
+	private static final Logger logger = LogManager.getLogger(RuleParserTest.class);
 
 	@Test
 	void testNullFile() {
@@ -88,7 +92,7 @@ class RuleParserTest {
 		
 		List<TransformationRule> rules = parser.parseRuleFile(validFile);
 		
-		System.out.println(rules);
+		logger.info(rules);
 		Assertions.assertNotNull(rules);
 		Assertions.assertEquals(rules.size(), numberOfRules);;
 

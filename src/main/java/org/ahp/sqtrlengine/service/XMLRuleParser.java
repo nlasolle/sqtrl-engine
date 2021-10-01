@@ -15,6 +15,8 @@ import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -29,8 +31,9 @@ import org.xml.sax.SAXException;
  */
 public class XMLRuleParser implements RuleParser {
 
-	final static String SCHEMA_FILE = "src/main/resources/transformationRule.xsd";
-
+	private final static String SCHEMA_FILE = "src/main/resources/transformationRule.xsd";
+	private final static Logger logger = LogManager.getLogger(XMLRuleParser.class);
+	 
 	@Override
 	public boolean isRuleFileValid(File ruleFile) throws FileNotFoundException, InvalidFileTypeException {
 		if(!ruleFile.exists()) {
@@ -52,7 +55,7 @@ public class XMLRuleParser implements RuleParser {
 			Validator validator = schema.newValidator();
 			validator.validate(new StreamSource(ruleFile));
 		} catch (SAXException | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return false;
 		}
 		return true;
@@ -108,7 +111,7 @@ public class XMLRuleParser implements RuleParser {
 
 			} else {
 				rule.setType("special");
-				rule.setIri(ruleElement.getAttributeValue("name"));
+				rule.setIri(ruleElement.getAttributeValue("iri"));
 				//rule.setLower(Integer.parseInt(ruleElement.getChild("lower").getText()));
 				//rule.setHigher(Integer.parseInt(ruleElement.getChild("higher").getText()));
 				rule.setCost(Float.parseFloat(ruleElement.getChild("cost").getText()));
@@ -121,11 +124,37 @@ public class XMLRuleParser implements RuleParser {
 				}
 			}
 
-			rules.add(rule);
+			rules.add(formatRule(rule));
 		}
 		
 		return rules;
 	}
 
+	/**
+	 * Remove unwanted space characters for graph pattern fields (newline, series of white space or tabs)
+	 * @param rule
+	 * @return
+	 */
+	private TransformationRule formatRule(TransformationRule rule) {
+		
+		TransformationRule formattedRule = new TransformationRule();
+		formattedRule.setIri(rule.getIri());
+		formattedRule.setCost(rule.getCost());
+		formattedRule.setLabel(rule.getLabel().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		formattedRule.setContext(rule.getContext().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		formattedRule.setLeft(rule.getLeft().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		formattedRule.setRight(rule.getRight().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		formattedRule.setExplanation(rule.getExplanation().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		
+		List<String> exceptions = new ArrayList<String>();
+		
+		for(String exception : rule.getExceptions()) {
+			exceptions.add(exception.trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
+		}
+		
+		formattedRule.setExceptions(exceptions);
+		
+		return formattedRule;
+	}
 
 }
