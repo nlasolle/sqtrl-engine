@@ -3,10 +3,11 @@ package org.ahp.sqtrl_engine;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.ahp.sqtrlengine.model.Query;
 import org.ahp.sqtrlengine.service.QueryParser;
 import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -17,7 +18,9 @@ import org.junit.jupiter.params.provider.ValueSource;
  *
  */
 class QueryParserTest {
-
+	
+	/*private static final Logger logger = LogManager.getLogger(QueryParserTest.class);
+	
 	@ParameterizedTest
 	@ValueSource(strings = {"queries/SelectTestQuery1.rq", 
 			"queries/SelectTestQuery2.rq",
@@ -29,7 +32,7 @@ class QueryParserTest {
 			queryString = Resources.toString(getClass().getClassLoader().getResource(fileName),
 					StandardCharsets.UTF_8);
 			Query query = QueryParser.parseQuery(queryString);
-			System.out.println(query);
+			logger.debug(query);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -43,7 +46,7 @@ class QueryParserTest {
 			queryString = Resources.toString(getClass().getClassLoader().getResource(fileName),
 					StandardCharsets.UTF_8);
 			Query query = QueryParser.parseQuery(queryString);
-			System.out.println(query);
+			logger.debug(query);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -63,5 +66,5 @@ class QueryParserTest {
 			e.printStackTrace();
 		}
 	}
-
+*/
 }

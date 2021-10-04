@@ -38,7 +38,7 @@
 		</rule>
 
 		<rule iri="http://sqtrl-rules/generic/4" label="Suppress triple">
-			<context>?x ?p ?y</context>
+			<context></context>
 			<left>?x ?p ?y</left>
 			<right></right>
 			<cost>8.0</cost>
@@ -69,8 +69,8 @@
 		<rule iri="http://sqtrl-rules/ahpo/3"
 			label="Replace recipient by quoted person">
 			<context></context>
-			<left>?l1 ahpo:sentTo ?x . ?l1 ahpo:citeName ?y</left>
-			<right>?l1 ahpo:sentTo ?y</right>
+			<left>?l1  &lt;http://e-hp.ahp-numerique.fr/ahpo#sentBy&gt; ?x . ?l1  &lt;http://e-hp.ahp-numerique.fr/ahpo#citeName&gt; ?y</left>
+			<right>?l1  &lt;http://e-hp.ahp-numerique.fr/ahpo#sentBy&gt; ?y</right>
 			<cost>3.0</cost>
 			<explanation>Replacing one of the correspondent by one of the quoted
 				persons</explanation>

@@ -15,6 +15,8 @@ import org.ahp.sqtrlengine.service.XMLRuleParser;
 import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
 import org.apache.jena.query.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,10 +24,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 
 public class RuleApplicationTest {
-
-	static List<TransformationRule> rules;
+	private static final Logger logger = LogManager.getLogger(RuleApplicationTest.class);
+	private static List<TransformationRule> rules;
 	private static final String RULE_FILE = "validRules.xml";
-	private static final String SPARQL_ENDPOINT = "http://localhost:3030/hp";
+	private static final String SPARQL_ENDPOINT = "http://localhost:3030/HP_0510";
 	
 	@BeforeAll
 	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
@@ -49,27 +51,17 @@ public class RuleApplicationTest {
 
 		RuleApplyer ruleApplyer = new RuleApplyer();
 		List<HashMap<String, String>> bindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
-		System.out.println(bindings);
+		logger.debug(bindings);
 
 	}
 	
-	@ParameterizedTest
-	@ValueSource(strings = {"http://sqtrl-rules/generic/1"})
-	void testLeftBind(String ruleIri) throws IOException {
-
-		TransformationRule rule = rules.stream()
-				.filter(r -> r.getIri().equals(ruleIri))
-				.findAny()
-				.orElse(null);
-
-
-		RuleApplyer ruleApplyer = new RuleApplyer();
-		List<HashMap<String, String>> bindings = null;
-		//ruleApplyer.bindLeftMember(rule, bindings );
-	}
 	
 	@ParameterizedTest
-	@CsvSource({"http://sqtrl-rules/generic/1, queries/ObjGenQuery.rq"})
+	@CsvSource({"http://sqtrl-rules/generic/1, queries/ObjGenQuery.rq", 
+		"http://sqtrl-rules/generic/2, queries/SubjGenQuery.rq",
+		"http://sqtrl-rules/generic/3, queries/PropGenQuery.rq",
+		"http://sqtrl-rules/generic/4, queries/ObjGenQuery.rq",
+		"http://sqtrl-rules/ahpo/3, queries/QuotedPersonQuery.rq"})
 	void testFullRuleApplication(String ruleIri, String queryFile) throws IOException {
 
 		TransformationRule rule = rules.stream()
@@ -83,16 +75,13 @@ public class RuleApplicationTest {
 		RuleApplyer ruleApplyer = new RuleApplyer();
 		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
 		
-		List<String> boundLeft = ruleApplyer.bindLeftMember(rule, contextBindings);
-
-		
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
-		System.out.println("--- Rule applications ---");
-		System.out.println(ruleApplications);
+		logger.info("--- Rule applications ---\n" + ruleApplications);
+		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
 		/*for(RuleApplication application : ruleApplications) {
-			System.out.println(application.getRuleIri());
-			System.out.println(application.getContextBinding());
-			System.out.println(application.getLeftBinding());
+			logger.debug(application.getRuleIri());
+			logger.debug(application.getContextBinding());
+			logger.debug(application.getLeftBinding());
 		}*/
 		
 	}

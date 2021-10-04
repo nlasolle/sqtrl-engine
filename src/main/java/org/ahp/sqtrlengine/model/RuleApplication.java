@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
 
 /**
  * Represent a rule application, composed of several bindings
@@ -18,8 +19,8 @@ public class RuleApplication {
 	private List<Triple> leftTriples = new ArrayList<Triple>();
 	private List<Triple> rightTriples = new ArrayList<Triple>();
 	
-	private String initialQuery;
-	private String generatedQuery;
+	private Query initialQuery;
+	private Query generatedQuery;
 	
 	
 	
@@ -31,19 +32,19 @@ public class RuleApplication {
 		this.ruleIri = ruleIri;
 	}
 
-	public String getInitialQuery() {
+	public Query getInitialQuery() {
 		return initialQuery;
 	}
 
-	public void setInitialQuery(String initialQuery) {
+	public void setInitialQuery(Query initialQuery) {
 		this.initialQuery = initialQuery;
 	}
 
-	public String getGeneratedQuery() {
+	public Query getGeneratedQuery() {
 		return generatedQuery;
 	}
 
-	public void setGeneratedQuery(String generatedQuery) {
+	public void setGeneratedQuery(Query generatedQuery) {
 		this.generatedQuery = generatedQuery;
 	}
 
@@ -81,9 +82,14 @@ public class RuleApplication {
 
 	@Override
 	public String toString() {
-		return "RuleApplication [ruleIri=" + ruleIri + ",\ncontextBinding=" + contextBinding + ",\nleftBinding="
-				+ leftBinding + ",\nleftTriples=" + leftTriples
-				+ ",\ninitialQuery=" + initialQuery + ",\ngeneratedQuery=" + generatedQuery + "]";
+		return "{ruleIri=" + ruleIri
+				+ ",\ncontextBinding=" + contextBinding
+				+ ",\nleftBinding=" + leftBinding
+				+ ",\nleftTriples=" + leftTriples
+				+ ",\nrightTriples=" + rightTriples
+				+ ",\ninitialQuery=" + initialQuery
+				+ ",\ngeneratedQuery=" + generatedQuery
+				+ "}";
 	}
 	
 }

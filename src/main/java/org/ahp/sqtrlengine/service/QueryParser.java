@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import org.ahp.sqtrlengine.model.Filter;
 import org.ahp.sqtrlengine.model.GraphPattern;
-import org.ahp.sqtrlengine.model.Query;
 import org.ahp.sqtrlengine.model.SelectClause;
 import org.ahp.sqtrlengine.model.TriplePattern;
 import org.ahp.sqtrlengine.model.WhereClause;
@@ -34,18 +33,7 @@ public class QueryParser {
 		return true;
 	}
 	
-	/**
-	 * Construct the query Java representation
-	 * @param queryString the query as an input string
-	 * @return an object representing the query
-	 */
-	public static Query parseQuery(String queryString) {
-		Query query = new Query();
-		query.setSelectClause(parseSelectClause(queryString));
-		query.setWhereClause(parseWhereClause(queryString));
-		return query;
-	}
-	
+
 	public static SelectClause parseSelectClause (String queryString) {
 		String selectString = queryString.substring(queryString.indexOf("SELECT"), queryString.indexOf("WHERE"));
 		
