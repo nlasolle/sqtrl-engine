@@ -1,8 +1,0 @@
-PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
-PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?l
-WHERE {
- ahpo:Letter ?p ?o .
- FILTER(?x = "Tutu")
-}

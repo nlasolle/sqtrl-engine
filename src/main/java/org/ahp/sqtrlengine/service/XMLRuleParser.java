@@ -13,6 +13,7 @@ import javax.xml.validation.Validator;
 
 import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +34,16 @@ public class XMLRuleParser implements RuleParser {
 
 	private final static String SCHEMA_FILE = "src/main/resources/transformationRule.xsd";
 	private final static Logger logger = LogManager.getLogger(XMLRuleParser.class);
-	 
+
+	private File ruleFile;
+	private Document document;
+
+	public XMLRuleParser(File ruleFile) {
+		this.setRuleFile(ruleFile);
+	}
+
 	@Override
-	public boolean isRuleFileValid(File ruleFile) throws FileNotFoundException, InvalidFileTypeException {
+	public boolean isRuleFileValid() throws FileNotFoundException, InvalidFileTypeException {
 		if(!ruleFile.exists()) {
 			throw new FileNotFoundException();
 		}
@@ -61,22 +69,26 @@ public class XMLRuleParser implements RuleParser {
 		return true;
 	}
 
+	/**
+	 * Load the XML document
+	 * @throws InvalidRuleFileException 
+	 */
+	public void loadXMLDocument() throws InvalidRuleFileException {
+		SAXBuilder saxBuilder = new SAXBuilder();
+
+		try {
+			document = saxBuilder.build(ruleFile);
+		} catch (JDOMException | IOException e) {
+			throw new InvalidRuleFileException("File " + ruleFile.getName() + "is invalid.");
+		}
+	}
+
 	@Override
-	public List<TransformationRule> parseRuleFile(File ruleFile) throws IOException, FileNotFoundException, InvalidRuleFileException {
+	public List<TransformationRule> parseRuleFile() throws InvalidRuleFileException {
 
 		List<TransformationRule> rules = new ArrayList<TransformationRule>(); 
 
 		TransformationRule rule;//To store each new rule
-
-		//Load the document
-		SAXBuilder saxBuilder = new SAXBuilder();
-		Document document;
-
-		try {
-			document = saxBuilder.build(ruleFile);
-		} catch (JDOMException e) {
-			throw new InvalidRuleFileException("File " + ruleFile.getName() + "is invalid.");
-		}
 
 		//Get all the elements
 		Element classElement = document.getRootElement();
@@ -126,7 +138,7 @@ public class XMLRuleParser implements RuleParser {
 
 			rules.add(formatRule(rule));
 		}
-		
+
 		return rules;
 	}
 
@@ -136,7 +148,7 @@ public class XMLRuleParser implements RuleParser {
 	 * @return
 	 */
 	private TransformationRule formatRule(TransformationRule rule) {
-		
+
 		TransformationRule formattedRule = new TransformationRule();
 		formattedRule.setIri(rule.getIri());
 		formattedRule.setCost(rule.getCost());
@@ -145,16 +157,45 @@ public class XMLRuleParser implements RuleParser {
 		formattedRule.setLeft(rule.getLeft().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
 		formattedRule.setRight(rule.getRight().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
 		formattedRule.setExplanation(rule.getExplanation().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
-		
+
 		List<String> exceptions = new ArrayList<String>();
-		
+
 		for(String exception : rule.getExceptions()) {
 			exceptions.add(exception.trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
 		}
-		
+
 		formattedRule.setExceptions(exceptions);
-		
 		return formattedRule;
+	}
+
+	@Override
+	public List<Prefix> parsePrefixes() {
+		List<Prefix> prefixes = new ArrayList<Prefix>();
+		Prefix prefix;
+
+		//Get all the elements
+		Element classElement = document.getRootElement();
+
+		List<Element> docPrefixes = classElement.getChild("prefixes").getChildren();
+
+		//Get all the prefixes
+		for(int i=0;i<docPrefixes.size();i++){
+			prefix = new Prefix();
+			prefix.setPrefix(docPrefixes.get(i).getAttributeValue("label"));
+			prefix.setNamespace(docPrefixes.get(i).getAttributeValue("iri"));
+			prefixes.add(prefix);
+		}
+
+		return prefixes;
+
+	}
+
+	public File getRuleFile() {
+		return ruleFile;
+	}
+
+	public void setRuleFile(File ruleFile) {
+		this.ruleFile = ruleFile;
 	}
 
 }

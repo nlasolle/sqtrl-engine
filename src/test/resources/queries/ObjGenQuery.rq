@@ -1,7 +1,0 @@
-PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
-SELECT ?l
-WHERE {
- ?l ahpo:sentBy ?x .
- ?l a ahpo:Letter .
- FILTER(?x = "Tutu")
-}

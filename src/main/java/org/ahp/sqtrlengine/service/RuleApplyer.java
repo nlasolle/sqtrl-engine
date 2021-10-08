@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class RuleApplyer {
 
-
 	private static final Logger logger = LogManager.getLogger(RuleApplyer.class);
 
 	/**
@@ -146,8 +145,11 @@ public class RuleApplyer {
 							} else {
 								subject = queryTriple.getSubject();
 							}
-
+							
+							logger.debug("PREDICATE " + leftTriple.getPredicate());
+							logger.debug("PREDICATE query " + queryTriple.getPredicate());
 							if(leftTriple.getPredicate().isVariable()) {
+								logger.debug("1");
 								predicate = queryTriple.getPredicate();
 								if(predicate.isURI()) {
 									tempBinding.put(leftTriple.getPredicate().toString(), "<" + predicate.toString() + ">");
@@ -155,11 +157,13 @@ public class RuleApplyer {
 									tempBinding.put(leftTriple.getPredicate().toString(), predicate.toString());
 								}
 							} else if(!leftTriple.getPredicate().equals(queryTriple.getPredicate())){
+								logger.debug("2");
 								if(i == queryTriples.size()-1) {
 									continue first;
 								}
 								continue;
 							} else {
+								logger.debug("3");
 								predicate = queryTriple.getPredicate();
 							}
 
@@ -288,7 +292,7 @@ public class RuleApplyer {
 			}
 
 		}
-		
+
 		//Add all right graph pattern
 		for(int i = 0 ; i < rightTriples.size() ; i++) {
 			graphPattern.addTriple(rightTriples.get(i));

@@ -1,6 +1,0 @@
-PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
-SELECT ?l
-WHERE {
- ?l ahpo:sentBy ?x .
- ?x ahpo:familyName "Poincaré"
-}

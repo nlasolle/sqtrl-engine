@@ -1,0 +1,9 @@
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?l1
+WHERE {
+	?l1 ahpo:sentBy <http://henripoincare.fr/api/items/843> .
+	?l1 ahpo:sentTo <http://henripoincare.fr/api/items/452> .
+	?l dcterms:subject "Relativité restreinte"
+}

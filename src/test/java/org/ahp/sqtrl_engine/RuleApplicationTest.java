@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.RuleApplyer;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
 import org.ahp.sqtrlengine.utils.QueryUtils;
+import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
 import org.apache.jena.query.Query;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class RuleApplicationTest {
 	private static final Logger logger = LogManager.getLogger(RuleApplicationTest.class);
 	private static List<TransformationRule> rules;
+	private static List<Prefix> prefixes;
 	private static final String RULE_FILE = "validRules.xml";
 	private static final String SPARQL_ENDPOINT = "http://localhost:3030/HP_0510";
 	
@@ -33,11 +36,12 @@ public class RuleApplicationTest {
 	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
 		File validFile = new File(RuleApplicationTest.class.getClassLoader().getResource(RULE_FILE).getFile());
 
-		XMLRuleParser parser = new XMLRuleParser();
-
-		rules = parser.parseRuleFile(validFile);
+		XMLRuleParser parser = new XMLRuleParser(validFile);
+		parser.loadXMLDocument();
+		rules = parser.parseRuleFile();
+		prefixes = parser.parsePrefixes();
+		RuleUtils.replacePrefixes(rules, prefixes);
 	}
-	
 	
 	@ParameterizedTest
 	@ValueSource(strings = {"http://sqtrl-rules/generic/1"})
@@ -57,13 +61,14 @@ public class RuleApplicationTest {
 	
 	
 	@ParameterizedTest
-	@CsvSource({"http://sqtrl-rules/generic/1, queries/ObjGenQuery.rq", 
-		"http://sqtrl-rules/generic/2, queries/SubjGenQuery.rq",
-		"http://sqtrl-rules/generic/3, queries/PropGenQuery.rq",
-		"http://sqtrl-rules/generic/4, queries/ObjGenQuery.rq",
-		"http://sqtrl-rules/ahpo/3, queries/QuotedPersonQuery.rq"})
-	void testFullRuleApplication(String ruleIri, String queryFile) throws IOException {
-
+	@CsvSource({
+		"http://sqtrl-rules/generic/1, queries/generic1.rq", 
+		"http://sqtrl-rules/generic/2, queries/generic2.rq",
+		"http://sqtrl-rules/generic/3, queries/generic3.rq",
+		"http://sqtrl-rules/generic/4, queries/generic4.rq",
+		"http://sqtrl-rules/generic/5, queries/generic5.rq"
+		})
+	void testGenericRuleApplication(String ruleIri, String queryFile) throws IOException {
 		TransformationRule rule = rules.stream()
 				.filter(r -> r.getIri().equals(ruleIri))
 				.findAny()
@@ -76,13 +81,36 @@ public class RuleApplicationTest {
 		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
 		
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
-		logger.info("--- Rule applications ---\n" + ruleApplications);
-		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
-		/*for(RuleApplication application : ruleApplications) {
-			logger.debug(application.getRuleIri());
-			logger.debug(application.getContextBinding());
-			logger.debug(application.getLeftBinding());
-		}*/
 		
+		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+		logger.info(ruleApplications);
 	}
+	
+	@ParameterizedTest
+	@CsvSource({
+		"http://sqtrl-rules/ahpo/2, queries/ahpo2.rq",
+		"http://sqtrl-rules/ahpo/3, queries/ahpo3.rq",
+		"http://sqtrl-rules/ahpo/4, queries/ahpo4.rq",
+		"http://sqtrl-rules/ahpo/5, queries/ahpo5.rq",
+		"http://sqtrl-rules/ahpo/6, queries/ahpo6.rq"
+		})
+	void testAHPRuleApplication(String ruleIri, String queryFile) throws IOException {
+		TransformationRule rule = rules.stream()
+				.filter(r -> r.getIri().equals(ruleIri))
+				.findAny()
+				.orElse(null);
+
+		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
+		Query query = QueryUtils.parseQuery(queryAsString);
+		
+		RuleApplyer ruleApplyer = new RuleApplyer();
+		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
+		
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
+		
+		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+		logger.info(ruleApplications);
+	}
+	
+	
 }
