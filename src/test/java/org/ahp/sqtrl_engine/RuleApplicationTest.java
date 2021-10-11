@@ -31,7 +31,7 @@ public class RuleApplicationTest {
 	private static List<Prefix> prefixes;
 	private static final String RULE_FILE = "validRules.xml";
 	private static final String SPARQL_ENDPOINT = "http://localhost:3030/HP_0510";
-	
+
 	@BeforeAll
 	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
 		File validFile = new File(RuleApplicationTest.class.getClassLoader().getResource(RULE_FILE).getFile());
@@ -42,11 +42,11 @@ public class RuleApplicationTest {
 		prefixes = parser.parsePrefixes();
 		RuleUtils.replacePrefixes(rules, prefixes);
 	}
-	
+
 	@ParameterizedTest
 	@ValueSource(strings = {"http://sqtrl-rules/generic/1"})
 	void testContextBindingRetrieval(String ruleIri) {
-		
+
 		TransformationRule rule = rules.stream()
 				.filter(r -> r.getIri().equals(ruleIri))
 				.findAny()
@@ -58,8 +58,8 @@ public class RuleApplicationTest {
 		logger.debug(bindings);
 
 	}
-	
-	
+
+
 	@ParameterizedTest
 	@CsvSource({
 		"http://sqtrl-rules/generic/1, queries/generic1.rq", 
@@ -67,7 +67,7 @@ public class RuleApplicationTest {
 		"http://sqtrl-rules/generic/3, queries/generic3.rq",
 		"http://sqtrl-rules/generic/4, queries/generic4.rq",
 		"http://sqtrl-rules/generic/5, queries/generic5.rq"
-		})
+	})
 	void testGenericRuleApplication(String ruleIri, String queryFile) throws IOException {
 		TransformationRule rule = rules.stream()
 				.filter(r -> r.getIri().equals(ruleIri))
@@ -76,16 +76,20 @@ public class RuleApplicationTest {
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
-		
+
 		RuleApplyer ruleApplyer = new RuleApplyer();
-		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
-		
-		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
-		
-		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
-		logger.info(ruleApplications);
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
+
+		if(ruleApplications.isEmpty()) {
+			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+		} else {
+			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info(ruleApplications);
+		}
+
+
 	}
-	
+
 	@ParameterizedTest
 	@CsvSource({
 		"http://sqtrl-rules/ahpo/2, queries/ahpo2.rq",
@@ -93,7 +97,7 @@ public class RuleApplicationTest {
 		"http://sqtrl-rules/ahpo/4, queries/ahpo4.rq",
 		"http://sqtrl-rules/ahpo/5, queries/ahpo5.rq",
 		"http://sqtrl-rules/ahpo/6, queries/ahpo6.rq"
-		})
+	})
 	void testAHPRuleApplication(String ruleIri, String queryFile) throws IOException {
 		TransformationRule rule = rules.stream()
 				.filter(r -> r.getIri().equals(ruleIri))
@@ -102,15 +106,16 @@ public class RuleApplicationTest {
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
-		
+
 		RuleApplyer ruleApplyer = new RuleApplyer();
-		List<HashMap<String, String>> contextBindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
-		
-		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplication(rule, query, contextBindings);
-		
-		logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
-		logger.info(ruleApplications);
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
+
+		if(ruleApplications.isEmpty()) {
+			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+		} else {
+			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info(ruleApplications);
+		}
 	}
-	
-	
+
 }

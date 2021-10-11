@@ -22,7 +22,7 @@ public class RuleApplication {
 	private Query initialQuery;
 	private Query generatedQuery;
 	
-	
+	private String explanation;
 	
 	public String getRuleIri() {
 		return ruleIri;
@@ -89,7 +89,16 @@ public class RuleApplication {
 				+ ",\nrightTriples=" + rightTriples
 				+ ",\ninitialQuery=" + initialQuery
 				+ ",\ngeneratedQuery=" + generatedQuery
+				+ ",\nexplanation=" + explanation
 				+ "}";
+	}
+
+	public String getExplanation() {
+		return explanation;
+	}
+
+	public void setExplanation(String explanation) {
+		this.explanation = explanation;
 	}
 	
 }

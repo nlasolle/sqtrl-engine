@@ -33,6 +33,83 @@ public class RuleApplyer {
 
 	private static final Logger logger = LogManager.getLogger(RuleApplyer.class);
 
+	public List<RuleApplication> getRuleApplications(Query query, TransformationRule rule, String sparqlEndpoint){
+		logger.debug("Searching for applications for rule " + rule.getIri());
+
+		List<RuleApplication> applications = new ArrayList<RuleApplication>(); 
+
+		//First situation, rule context is not empty
+		if(!rule.getContext().isEmpty()) {
+			List<HashMap<String, String>> contextBindings = getContextBindings(rule, sparqlEndpoint);
+
+			if(contextBindings.isEmpty()) {
+				logger.debug("No application for rule " + rule.getIri() + " context field and for the SPARQL endpoint " + sparqlEndpoint);
+				return applications;
+			}
+
+
+			for(HashMap<String, String> contextBinding : contextBindings) {
+				RuleApplication application = new RuleApplication();
+				application.setRuleIri(rule.getIri());
+				application.setInitialQuery(query);
+				application.setContextBinding(contextBinding);
+
+				retrieveLeftBindings(rule, application);
+
+				if(application.getLeftBinding().isEmpty()) {
+					continue;
+				}
+
+				getBoundRightTriples(rule, application);
+				applyTransformation(application);
+				generateExplanation(rule, application);
+				//application application
+				applications.add(application);
+			}
+
+		} 
+		//Empty rule context
+		else {
+			RuleApplication application = new RuleApplication();
+			application.setRuleIri(rule.getIri());
+			application.setInitialQuery(query);
+			application.setContextBinding(new HashMap<String, String>());
+			retrieveLeftBindings(rule, application);
+			if(application.getLeftBinding().isEmpty()) {
+				return applications;
+			}
+
+			getBoundRightTriples(rule, application);
+
+			applyTransformation(application);
+			generateExplanation(rule, application);
+			applications.add(application);
+		}
+
+		return applications;
+	}
+	
+	/**
+	 * Generate a human-readable explanation from the bindings 
+	 * @param rule the transformation rule
+	 * @param application full set rule application object with all bindings known
+	 */
+	private void generateExplanation(TransformationRule rule, RuleApplication application) {
+		String explanation = rule.getExplanation();
+		
+		for(Entry<String, String> entry : application.getContextBinding().entrySet()) {
+			explanation = explanation.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
+					entry.getValue());
+		}
+		
+		for(Entry<String, String> entry : application.getLeftBinding().entrySet()) {
+			explanation = explanation.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
+					entry.getValue());
+		}
+		
+		application.setExplanation(explanation);
+		
+	}
 	/**
 	 * Generate and execute a SPARQL to find context bindings for the given transformation rule and RDFS base
 	 * @param rule a SQTRL rule
@@ -94,126 +171,92 @@ public class RuleApplyer {
 	}
 
 	/**
-	 * Match bound left to query for transformation
+	 * Match bound left to query for transformation for a given context binding (based on the RDF graph)
 	 * @param rule a SQTRL rule
-	 * @param query the initial SPARQL query
-	 * @param boundLeftList list of left field with context
+	 * @param application the currently in construction Rule application with given the contextBinding and the iitial SPARQL query
 	 */
-	public List<RuleApplication> getRuleApplication(TransformationRule rule, Query query, List<HashMap<String, String>> contextBindings) {
-		List<RuleApplication> applications = new ArrayList<>();
-		logger.debug("QUERY " + query);
-		logger.debug("RULE " + rule);
-		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(query);
-		logger.debug(queryTriples);
-		List<Triple> leftTriples;
+	public void retrieveLeftBindings(TransformationRule rule, RuleApplication application) {
+		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(application.getInitialQuery());
+
+		HashMap<String, String> contextBinding = application.getContextBinding();
+
+		//First, we construct the left triples by assigning context binding variable values
+		List<Triple> leftTriples = getBoundLeftTriples(rule, application.getInitialQuery(), contextBinding);
 
 		/*We need to find associations between 
 		 * context bindings related to the rule context and 
 		 * the left pattern of the transformation rule */
-		first:
-			for(HashMap<String, String> contextBinding : contextBindings) {
-				//First, we construct the boundLeft, by assigning context binding variable values
-				leftTriples =  getBoundLeftTriples(rule, query, contextBinding);
+		List<Triple> boundLeftTriples = new ArrayList<>();
 
-				List<Triple> boundLeftTriples = new ArrayList<>();
+		HashMap<String, String> leftBindings = new HashMap<>();
 
-				HashMap<String, String> leftBinding = new HashMap<>();
+		for(Triple leftTriple : leftTriples) {
+			for(int i = 0; i < queryTriples.size(); i++) {	
+				Triple queryTriple = queryTriples.get(i);
+				Node subject = null, predicate = null, object = null; // Fields of one final bound triple part of the left pattern
 
-				second:
-					for(Triple leftTriple : leftTriples) {
+				HashMap<String, String> tempBinding = new HashMap<>();
 
-						for(int i = 0; i < queryTriples.size(); i++) {	
+				if(leftTriple.getSubject().isVariable()) {
+					subject = queryTriple.getSubject();
+					if(subject.isURI()) {
+						tempBinding.put(leftTriple.getSubject().toString(), "<" + subject.toString() + ">");
+					} else {
+						tempBinding.put(leftTriple.getSubject().toString(), subject.toString());
+					}
+				} else if(!leftTriple.getSubject().equals(queryTriple.getSubject())){
+					//This means that no matching has been found for a triple which is part of the current binding
+					if(i == queryTriples.size()-1) {
+						break;
+					}
+					continue;
+				} else {
+					subject = queryTriple.getSubject();
+				}
 
-							Triple queryTriple = queryTriples.get(i);
-							Node subject = null, predicate = null, object = null; // Fields of one final bound triple part of the left pattern
+				if(leftTriple.getPredicate().isVariable()) {
+					predicate = queryTriple.getPredicate();
+					if(predicate.isURI()) {
+						tempBinding.put(leftTriple.getPredicate().toString(), "<" + predicate.toString() + ">");
+					} else {
+						tempBinding.put(leftTriple.getPredicate().toString(), predicate.toString());
+					}
+				} else if(!leftTriple.getPredicate().equals(queryTriple.getPredicate())){
+					if(i == queryTriples.size()-1) {
+						break;
+					}
+					continue;
+				} else {
+					predicate = queryTriple.getPredicate();
+				}
 
-							HashMap<String, String> tempBinding = new HashMap<>();
-
-							if(leftTriple.getSubject().isVariable()) {
-								subject = queryTriple.getSubject();
-								if(subject.isURI()) {
-									tempBinding.put(leftTriple.getSubject().toString(), "<" + subject.toString() + ">");
-								} else {
-									tempBinding.put(leftTriple.getSubject().toString(), subject.toString());
-								}
-							} else if(!leftTriple.getSubject().equals(queryTriple.getSubject())){
-								//This means that no matching has been found for a triple which is part of the current binding
-								if(i == queryTriples.size()-1) {
-									continue first;
-								}
-								continue;
-							} else {
-								subject = queryTriple.getSubject();
-							}
-							
-							logger.debug("PREDICATE " + leftTriple.getPredicate());
-							logger.debug("PREDICATE query " + queryTriple.getPredicate());
-							if(leftTriple.getPredicate().isVariable()) {
-								logger.debug("1");
-								predicate = queryTriple.getPredicate();
-								if(predicate.isURI()) {
-									tempBinding.put(leftTriple.getPredicate().toString(), "<" + predicate.toString() + ">");
-								} else {
-									tempBinding.put(leftTriple.getPredicate().toString(), predicate.toString());
-								}
-							} else if(!leftTriple.getPredicate().equals(queryTriple.getPredicate())){
-								logger.debug("2");
-								if(i == queryTriples.size()-1) {
-									continue first;
-								}
-								continue;
-							} else {
-								logger.debug("3");
-								predicate = queryTriple.getPredicate();
-							}
-
-							if(leftTriple.getObject().isVariable()) {
-								object = queryTriple.getObject();
-								if(object.isURI()) {
-									tempBinding.put(leftTriple.getObject().toString(), "<" + object.toString() + ">");
-								} else {
-									tempBinding.put(leftTriple.getObject().toString(), object.toString());
-								}
-							} else if(!leftTriple.getObject().equals(queryTriple.getObject())){
-								if(i == queryTriples.size()-1) {
-									continue first;
-								}
-
-								continue;
-							} else {
-								object = queryTriple.getObject();
-							}
-
-							//This line is reached if a match has been found. 
-							//It is possible to construct the final bound left triple and switch to the next one if necessary
-							boundLeftTriples.add(new Triple(subject, predicate, object));					
-							leftBinding.putAll(tempBinding); 
-							logger.debug("LEFT BINDING " + leftBinding);
-							continue second;
-						}
+				if(leftTriple.getObject().isVariable()) {
+					object = queryTriple.getObject();
+					if(object.isURI()) {
+						tempBinding.put(leftTriple.getObject().toString(), "<" + object.toString() + ">");
+					} else {
+						tempBinding.put(leftTriple.getObject().toString(), object.toString());
+					}
+				} else if(!leftTriple.getObject().equals(queryTriple.getObject())){
+					if(i == queryTriples.size()-1) {
+						break;
 					}
 
-				List<Triple> boundRightTriples = getBoundRightTriples(rule, query, contextBinding, leftBinding);
+					continue;
+				} else {
+					object = queryTriple.getObject();
+				}
 
-				RuleApplication application = new RuleApplication();
-				application.setRuleIri(rule.getIri());
-				application.setLeftTriples(boundLeftTriples);
-
-				application.setRightTriples(boundRightTriples);
-				application.setContextBinding(contextBinding);
-				application.setLeftBinding(leftBinding);
-				application.setInitialQuery(query);
-				logger.debug(application);
-
-				Query generatedQuery = applyTransformation(application);
-				application.setGeneratedQuery(generatedQuery);
-
-				applications.add(application);
-				//bindings.add(binding);
+				//This line is reached if a match has been found. 
+				//It is possible to construct the final bound left triple and switch to the next one if necessary
+				boundLeftTriples.add(new Triple(subject, predicate, object));					
+				leftBindings.putAll(tempBinding); 
 			}
+		}
 
+		application.setLeftBinding(leftBindings);
+		application.setLeftTriples(boundLeftTriples);
 
-		return applications;
 
 	}
 
@@ -226,17 +269,12 @@ public class RuleApplyer {
 	 */
 	private List<Triple> getBoundLeftTriples(TransformationRule rule, Query query, HashMap<String, String> contextBinding) {
 		String boundLeft = rule.getLeft();
-		String boundRight = rule.getRight();
 
 		for(Entry<String, String> entry : contextBinding.entrySet()) {
-			logger.debug("ENTRY " + entry);
 			boundLeft = boundLeft.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
-					entry.getValue());
-			boundRight = boundRight.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
 		}
 
-		logger.debug("BOUND LEFT " + boundLeft);
 		Element boundLeftPattern = ParserARQ.parseElement("{" + boundLeft + "}");
 
 		return QueryUtils.extractTriplePatterns(boundLeftPattern);
@@ -250,24 +288,24 @@ public class RuleApplyer {
 	 * @param leftBinding the left bindings calculated for the initial query
 	 * @return bindings for the rule left pattern
 	 */
-	private List<Triple> getBoundRightTriples(TransformationRule rule, Query query,
-			HashMap<String, String> contextBinding, HashMap<String, String> leftBinding) {
+	private void getBoundRightTriples(TransformationRule rule, RuleApplication application) {
 
 		String boundRight = rule.getRight();
 
-		for(Entry<String, String> entry : contextBinding.entrySet()) {
+		for(Entry<String, String> entry : application.getContextBinding().entrySet()) {
 			boundRight = boundRight.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
 		}
 
-		for(Entry<String, String> entry : leftBinding.entrySet()) {
+		for(Entry<String, String> entry : application.getLeftBinding().entrySet()) {
 			boundRight = boundRight.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
 		}
 
-		logger.debug("BOUND RIGHT " + boundRight);
 		Element boundRightPattern = ParserARQ.parseElement("{" + boundRight + "}");
-		return QueryUtils.extractTriplePatterns(boundRightPattern);
+		List<Triple> boundRightTriples = QueryUtils.extractTriplePatterns(boundRightPattern);
+		application.setRightTriples(boundRightTriples);
+
 	}
 
 
@@ -276,7 +314,7 @@ public class RuleApplyer {
 	 * @param application the application with all information for applying the transformation
 	 * @return a generated query as a Jena object
 	 */
-	private Query applyTransformation(RuleApplication application) {
+	public void applyTransformation(RuleApplication application) {
 		Query generatedQuery = application.getInitialQuery().cloneQuery();
 		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(application.getInitialQuery());
 
@@ -307,8 +345,7 @@ public class RuleApplyer {
 		}
 
 		generatedQuery.setQueryPattern(fullGraphPattern);
-
-		return generatedQuery;
+		application.setGeneratedQuery(generatedQuery);
 	}
 
 	/**
@@ -360,5 +397,6 @@ public class RuleApplyer {
 
 		return generatedQuery;
 	}
+	
 
 }
