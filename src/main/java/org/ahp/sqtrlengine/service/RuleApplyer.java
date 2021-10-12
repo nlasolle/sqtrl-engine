@@ -62,7 +62,7 @@ public class RuleApplyer {
 
 				getBoundRightTriples(rule, application);
 				applyTransformation(application);
-				generateExplanation(rule, application);
+				generateExplanation(rule, application, sparqlEndpoint);
 				//application application
 				applications.add(application);
 			}
@@ -82,34 +82,83 @@ public class RuleApplyer {
 			getBoundRightTriples(rule, application);
 
 			applyTransformation(application);
-			generateExplanation(rule, application);
+			generateExplanation(rule, application, sparqlEndpoint);
 			applications.add(application);
 		}
 
 		return applications;
 	}
-	
+
 	/**
 	 * Generate a human-readable explanation from the bindings 
 	 * @param rule the transformation rule
 	 * @param application full set rule application object with all bindings known
 	 */
-	private void generateExplanation(TransformationRule rule, RuleApplication application) {
+	private void generateExplanation(TransformationRule rule, RuleApplication application, String sparqlEndpoint) {
 		String explanation = rule.getExplanation();
-		
+
 		for(Entry<String, String> entry : application.getContextBinding().entrySet()) {
 			explanation = explanation.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
 		}
-		
+
 		for(Entry<String, String> entry : application.getLeftBinding().entrySet()) {
 			explanation = explanation.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
 		}
+
+		//Now, the objective is to  identify all the IRI which are part of the explanation
+		//A SPARQL query is generated to retrieve their potential labels 
 		
-		application.setExplanation(explanation);
+		String query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
+				"PREFIX dcterms: <http://purl.org/dc/terms/>\n" + 
+				"SELECT";
+
+		String varsPattern = "", graphPattern = "";
+
+		Pattern pattern = Pattern.compile("<[^\\s]*>");
+		Matcher matcher = pattern.matcher(explanation);
+		HashMap<String, String> varsAssociations = new HashMap<>();
+
+		int i = 0;
+		while (matcher.find()) {
+			logger.info("Match " + matcher.group());
+			varsAssociations.put("?rdfs" + i, matcher.group());
+			varsAssociations.put("?dc" + i, matcher.group());
+
+			varsPattern += " ?rdfs" + i + " ?dc" +i;
+			graphPattern += "OPTIONAL {" + matcher.group() + " rdfs:label ?rdfs" + i + "} .\n"
+					+ "OPTIONAL {" + matcher.group() + " dcterms:title ?dc" + i + "} . \n";
+			i++;
+		}
+
+		//If no IRI exists in the explanation field, only return the current explanation which is already human-readable
+		if(varsAssociations.isEmpty()) {
+			application.setExplanation(explanation);
+			return;
+		}
 		
+		query+= varsPattern + " {\n" + graphPattern + "}";
+		logger.info("Query " + query);
+
+		ResultSet results = JenaWrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
+
+		//Save the bindings with the values for each variable
+		if( results.hasNext() ){
+			QuerySolution solution = results.next();
+			for (Entry<String, String> association : varsAssociations.entrySet()) {
+
+				if(solution.get(association.getKey()) != null) {
+					String label = solution.get(association.getKey()).toString();
+
+					explanation = explanation.replaceAll(association.getValue(), label);
+				} 
+			}
+		}
+
+		application.setExplanation(explanation);	
 	}
+
 	/**
 	 * Generate and execute a SPARQL to find context bindings for the given transformation rule and RDFS base
 	 * @param rule a SQTRL rule
@@ -397,6 +446,6 @@ public class RuleApplyer {
 
 		return generatedQuery;
 	}
-	
+
 
 }
