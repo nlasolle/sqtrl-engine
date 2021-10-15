@@ -52,14 +52,15 @@ public class TransformationProcessTest {
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
 		
-		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(2,
+		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12,
 				rules, query, SPARQL_ENDPOINT);
 		
 		transformationProcess.sortRules();
 		int i = 0;
-		while(transformationProcess.getNextNode() && i<5) {
+		while(transformationProcess.getNextNode()) {
 			i++;
 			logger.info("Tour " + i);
+			logger.info("Size of nodes " + transformationProcess.getNodes().size());
 		}
 	}
 

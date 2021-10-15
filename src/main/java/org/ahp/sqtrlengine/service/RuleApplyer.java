@@ -37,7 +37,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class RuleApplyer {
 
+	private JenaWrapper wrapper;
 	private static final Logger logger = LogManager.getLogger(RuleApplyer.class);
+
+	public RuleApplyer(String endpoint) {
+		wrapper = new JenaWrapper(endpoint);
+	}
 
 	public List<RuleApplication> getRuleApplications(Query query, TransformationRule rule, String sparqlEndpoint){
 		logger.debug("Searching for applications for rule " + rule.getIri());
@@ -56,38 +61,37 @@ public class RuleApplyer {
 			for(HashMap<String, String> contextBindings : contextBindingsList) {
 				//retrieveLeftBindings(rule, application);
 				List<RuleApplication> tempApplications = retrieveLeftBindingsBis(rule, query, contextBindings);
-				
+
 				if(tempApplications.isEmpty()) {
 					continue;
 				}
-				
+
 				for(RuleApplication application : tempApplications) {
 					getBoundRightTriples(rule, application);
 					applyTransformation(application);
 					generateExplanation(rule, application, sparqlEndpoint);
 				}
-				
+
 				applications.addAll(tempApplications);
 			}
 
 		} 
 		//Empty rule context
 		else {
-
 			//retrieveLeftBindings(rule, application);
 			applications = retrieveLeftBindingsBis(rule, query, new HashMap<String, String>());
 			if(applications.isEmpty()) {
 				return applications;
 			}
-			
+
 			for(RuleApplication application : applications) {
 				getBoundRightTriples(rule, application);
 				applyTransformation(application);
 				generateExplanation(rule, application, sparqlEndpoint);
 			}
-			
-		}
 
+		}
+		
 		return applications;
 	}
 
@@ -141,7 +145,7 @@ public class RuleApplyer {
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
 
-		ResultSet results = JenaWrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
+		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
 		//Save the bindings with the values for each variable
 		if( results.hasNext() ){
@@ -155,7 +159,7 @@ public class RuleApplyer {
 				} 
 			}
 		}
-
+		wrapper.closeExecution();
 		application.setExplanation(explanation);	
 	}
 
@@ -172,8 +176,9 @@ public class RuleApplyer {
 		List<String> variables = getVariablesFromString(rule.getContext());
 
 		//Execute the query over the SPARQL endpoint
-		ResultSet results = JenaWrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
+		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
+	
 		//Save the bindings with the values for each variable
 		while( results.hasNext() ){
 			HashMap<String, String> binding = new HashMap<>();
@@ -192,6 +197,7 @@ public class RuleApplyer {
 			bindings.add(binding);
 		}
 
+		wrapper.closeExecution();
 		return bindings;
 	}
 
@@ -339,6 +345,19 @@ public class RuleApplyer {
 
 		List<String> variables = getVariablesFromString(leftAsString);
 
+		//In this situation, no variable remains on the left pattern (all resolved with context binding)
+		//Only one rule application exists for the given rule and the context binding
+		if(variables.isEmpty()) {
+			RuleApplication singleApplication = new RuleApplication();
+			singleApplication.setRuleIri(rule.getIri());
+			singleApplication.setInitialQuery(query);
+			singleApplication.setContextBinding(contextBindings);
+			singleApplication.setLeftBinding(leftBindings);
+			singleApplication.setLeftTriples(boundLeftTriples);
+			applications.add(singleApplication);
+			return applications;
+		}
+
 		for(String var : variables) {
 			bodyQuery += var + " ";
 		}
@@ -347,25 +366,25 @@ public class RuleApplyer {
 
 		for(Triple leftTriple : leftTriples) {
 			String subject, predicate, object;
-			
+
 			if(leftTriple.getSubject().isURI()) {
 				subject = "<" + leftTriple.getSubject() + ">";
 			} else {
 				subject = leftTriple.getSubject().toString();
 			}
-			
+
 			if(leftTriple.getPredicate().isURI()) {
 				predicate = "<" + leftTriple.getPredicate() + ">";
 			} else {
 				predicate = leftTriple.getPredicate().toString();
 			}
-			
+
 			if(leftTriple.getObject().isURI()) {
 				object = "<" + leftTriple.getObject() + ">";
 			} else {
 				object = leftTriple.getObject().toString();
 			}
-			
+
 			bodyQuery += subject + " "
 					+ predicate + " "
 					+ object + " .\n";

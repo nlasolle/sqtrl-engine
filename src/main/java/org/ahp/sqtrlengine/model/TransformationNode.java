@@ -21,6 +21,7 @@ public class TransformationNode {
 	
 	//All the pending rule applications for this state (possible future child in the search tree) ordered based on transformation cost
 	private List<RuleApplication> pendingApplications = new ArrayList<>();
+	private List<String> appliedRuleIRI = new ArrayList<>();
 	
 	//The rule application which created this node
 	private RuleApplication application;
@@ -79,6 +80,18 @@ public class TransformationNode {
 
 	public void setApplication(RuleApplication application) {
 		this.application = application;
+	}
+
+	public List<String> getAppliedRuleIRI() {
+		return appliedRuleIRI;
+	}
+
+	public void setAppliedRuleIRI(List<String> appliedRuleIRI) {
+		this.appliedRuleIRI = appliedRuleIRI;
+	}
+
+	public void addAppliedRuleIRI(String IRI) {
+		appliedRuleIRI.add(IRI);
 	}
 	
 }

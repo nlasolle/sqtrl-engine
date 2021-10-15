@@ -26,7 +26,7 @@
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
-		<!-- <rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
+		<!--  <rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>
 			<right>?x ?q ?y</right>
@@ -101,7 +101,7 @@
 			<explanation>Remove a correspondent (?x) and set it as one of the quoted persons</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/7" label="Replace the place of archive">
+		<!-- <rule iri="http://sqtrl-rules/ahpo/7" label="Replace the place of archive">
 			<context>?l1 ahpo:archivedAt ?x . ?l1 ahpo:hasAddress ?a1 . ?a1
 				ahpo:town ?t1 .
 				?l2 ahpo:archivedAt ?y . ?l2 ahpo:hasAddress ?a2 . ?a2 ahpo:town ?t1
@@ -111,14 +111,16 @@
 			<cost>3.0</cost>
 			<explanation>Replace the place of archive by another place of archives located in the same city
 			</explanation>
-		</rule>
+		</rule> -->
 
-		<rule iri="http://sqtrl-rules/ahpo/8" label="Replace subject with place related subject">
+		<!--  <rule iri="http://sqtrl-rules/ahpo/8" label="Replace subject with place related subject">
 			<context>?l1 ahpo:archivedAt ?x . ?l1 dcterms:subject ?s1 . ?l2 ahpo:archivedAt ?x . ?l2 dcterms:subject ?s2</context>
 			<left>?l1 dcterms:subject ?s1</left>
 			<right>?l1 dcterms:subject ?s2</right>
 			<cost>2.0</cost>
+			<exception>FILTER(?l1 != ?l2)</exception>
+			<exception>FILTER(?s1 != ?s2)</exception>
 			<explanation>Replace the subject by another subject of letters archived within the same place</explanation>
-		</rule>
+		</rule>-->
 	</rules>
 </SQTRule>

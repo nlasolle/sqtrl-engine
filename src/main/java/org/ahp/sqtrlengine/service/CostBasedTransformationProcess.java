@@ -21,7 +21,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 			Query query, String sparqlEndpoint) {
 		super(rules, query, sparqlEndpoint);
 		this.maxCost = maxCost;
-		
+
 		sortRules();
 	}
 
@@ -33,6 +33,10 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 		this.maxCost = maxCost;
 	}
 
+	/** Get the next transformation node
+	 * 
+	 * @return true if a node has been created
+	 */
 	public boolean getNextNode() {
 
 		/* At this step, the rule list is supposed to be ordered based on their transformation costs.
@@ -40,39 +44,45 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 		 */
 		for(TransformationRule rule: rules) {
 			for(TransformationNode existingNode : nodes) {
-				List<RuleApplication> applications;
-				
-				if(existingNode.getPendingApplications().isEmpty()) {
-					Query nodeQuery;
-					if(existingNode.getLevel() == 0) {
-						nodeQuery = query; //Level 0 is for the initial node 
-					} else { 
-						nodeQuery = existingNode.getApplication().getGeneratedQuery();
+
+				if(!existingNode.getAppliedRuleIRI().contains(rule.getIri()) && 
+						(rule.getCost() + existingNode.getGlobalCost()) <= maxCost ) {
+	
+					List<RuleApplication> applications;
+
+					if(existingNode.getPendingApplications().isEmpty()) {
+						Query nodeQuery;
+						if(existingNode.getLevel() == 0) {
+							nodeQuery = query; //Level 0 is for the initial node 
+						} else { 
+							nodeQuery = existingNode.getApplication().getGeneratedQuery();
+						}
+
+						applications = ruleApplyer.getRuleApplications(nodeQuery, rule, sparqlEndpoint);
+					} else {
+						applications = existingNode.getPendingApplications();
 					}
-					
-					applications = ruleApplyer.getRuleApplications(nodeQuery, rule, sparqlEndpoint);
-				} else {
-					applications = existingNode.getPendingApplications();
-				}
-				
-				if(applications != null && !applications.isEmpty()) {
-					TransformationNode pendingNode = new TransformationNode();
-					//The rule application details are saved for the newly formed node
-					pendingNode.setGlobalCost(existingNode.getGlobalCost() + rule.getCost());
-					pendingNode.setParentNode(existingNode);
-					pendingNode.setLevel(existingNode.getLevel() + 1);
-					RuleApplication application = applications.remove(0);
-					pendingNode.setApplication(application);
-					existingNode.setPendingApplications(applications);
-					nodes.add(pendingNode);
-					
-					logger.info("Rule application " + application);
-					
-					return true;
+
+					if(applications != null && !applications.isEmpty()) {
+						TransformationNode pendingNode = new TransformationNode();
+						//The rule application details are saved for the newly formed node
+						pendingNode.setGlobalCost(existingNode.getGlobalCost() + rule.getCost());
+						pendingNode.setParentNode(existingNode);
+						pendingNode.setLevel(existingNode.getLevel() + 1);
+						RuleApplication application = applications.remove(0);
+						pendingNode.setApplication(application);
+						existingNode.setPendingApplications(applications);
+						nodes.add(pendingNode);
+
+						existingNode.addAppliedRuleIRI(rule.getIri());
+						logger.info("Pending node application " + pendingNode.getApplication());
+						logger.info("Pending node cost " + pendingNode.getGlobalCost());
+						return true;
+					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
 

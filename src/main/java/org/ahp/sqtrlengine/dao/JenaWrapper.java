@@ -37,7 +37,13 @@ public class JenaWrapper {
 
 	String updateFile;
 	
+	RDFConnection conn;
+	QueryExecution qExec;
 	private static Logger LOGGER = Logger.getLogger(JenaWrapper.class.getName());
+	
+	public JenaWrapper(String endpoint) {
+		conn = RDFConnectionFactory.connect(endpoint);
+	}
 	
 	public void loadGraph(String file) {
 
@@ -126,14 +132,19 @@ public class JenaWrapper {
 	 * @param endpoint the URL of SPARQL endpoint
 	 * @return the results of the query
 	 */
-	public static ResultSet executeRemoteSelectQuery(String queryString, String endpoint) {
-		RDFConnection conn = RDFConnectionFactory.connect(endpoint);	
+	public ResultSet executeRemoteSelectQuery(String queryString, String endpoint) {	
 		Query query = QueryFactory.create(queryString) ;
-
-		QueryExecution qExec = conn.query(query) ;
+		qExec = conn.query(query) ;
 		ResultSet execResults = qExec.execSelect();
 		return execResults; 
 
+	}
+	
+	/**
+	 * Should be called after iterating over the result of a query execution
+	 */
+	public void closeExecution() {
+		qExec.close();
 	}
 
 	/**
@@ -146,7 +157,7 @@ public class JenaWrapper {
 		RDFConnection conn = RDFConnectionFactory.connect(endpoint);	
 		Query query = QueryFactory.create(queryString) ;
 
-		QueryExecution qExec = conn.query(query) ;
+		qExec = conn.query(query) ;
 		Model result = qExec.execConstruct();
 		return result; 
 

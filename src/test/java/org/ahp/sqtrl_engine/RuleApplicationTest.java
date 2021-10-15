@@ -53,7 +53,7 @@ public class RuleApplicationTest {
 				.orElse(null);
 
 
-		RuleApplyer ruleApplyer = new RuleApplyer();
+		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<HashMap<String, String>> bindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
 		logger.debug(bindings);
 
@@ -77,7 +77,7 @@ public class RuleApplicationTest {
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
 
-		RuleApplyer ruleApplyer = new RuleApplyer();
+		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {
@@ -107,7 +107,7 @@ public class RuleApplicationTest {
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
 
-		RuleApplyer ruleApplyer = new RuleApplyer();
+		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {
@@ -131,7 +131,7 @@ public class RuleApplicationTest {
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		Query query = QueryUtils.parseQuery(queryAsString);
 
-		RuleApplyer ruleApplyer = new RuleApplyer();
+		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {

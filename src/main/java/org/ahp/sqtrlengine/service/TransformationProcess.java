@@ -23,7 +23,7 @@ public abstract class TransformationProcess {
 	protected Query query;
 	protected String sparqlEndpoint;
 
-	protected RuleApplyer ruleApplyer = new RuleApplyer();
+	protected RuleApplyer ruleApplyer;
 	
 	protected ArrayList<TransformationNode> nodes = new ArrayList<>();
 	
@@ -31,7 +31,7 @@ public abstract class TransformationProcess {
 		this.rules = rules;
 		this.query = query;
 		this.sparqlEndpoint = sparqlEndpoint;
-		
+		ruleApplyer = new RuleApplyer(sparqlEndpoint);
 		TransformationNode initialNode = new TransformationNode();
 		initialNode.setLevel(0);
 		initialNode.setGlobalCost(0);
