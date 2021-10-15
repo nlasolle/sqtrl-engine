@@ -90,15 +90,14 @@ public class JenaWrapper {
 	/**
 	 * Execute a select SPARQL query 
 	 * @param queryString the SELECT SPARQL query 
-	 * @param specify if the given query should uses rdfs deduction
+	 * @param model the target graph
 	 */
 
-	public ResultSet executeLocalSelectQuery(String queryString, boolean deduction) {
+	public static ResultSet executeLocalSelectQuery(String queryString, Model model) {
 		Query query = QueryFactory.create(queryString) ;
 
-		QueryExecution qexec = QueryExecutionFactory.create(query, 
-				deduction ? inferenceModel : model); 
-
+		QueryExecution qexec = QueryExecutionFactory.create(query, model); 
+		
 		return qexec.execSelect();
 	}
 
@@ -181,7 +180,7 @@ public class JenaWrapper {
 				"     ?s ?p ?o.\r\n" + 
 				"  }";
 
-		ResultSet results = executeLocalSelectQuery(query, true);
+		ResultSet results = executeLocalSelectQuery(query, model);
 		count = results.next().getLiteral("?c").getInt();
 
 		return count;

@@ -1,7 +1,9 @@
 PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
 SELECT ?l
 WHERE {
- ?l ahpo:sentBy ?x .
+ ?l ahpo:sentBy ?a .
+ ?l2 ahpo:sentBy <http://henripoincare.fr/api/items/843>.
+ ?l2 ahpo:sentTo ?c .
  ?l a ahpo:Letter .
  FILTER(?x = "Tutu")
 }

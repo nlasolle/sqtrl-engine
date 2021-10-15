@@ -2,6 +2,7 @@ package org.ahp.sqtrlengine.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -12,10 +13,15 @@ import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.lang.ParserARQ;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
@@ -40,50 +46,46 @@ public class RuleApplyer {
 
 		//First situation, rule context is not empty
 		if(!rule.getContext().isEmpty()) {
-			List<HashMap<String, String>> contextBindings = getContextBindings(rule, sparqlEndpoint);
+			List<HashMap<String, String>> contextBindingsList = getContextBindings(rule, sparqlEndpoint);
 
-			if(contextBindings.isEmpty()) {
+			if(contextBindingsList.isEmpty()) {
 				logger.debug("No application for rule " + rule.getIri() + " context field and for the SPARQL endpoint " + sparqlEndpoint);
 				return applications;
 			}
 
-
-			for(HashMap<String, String> contextBinding : contextBindings) {
-				RuleApplication application = new RuleApplication();
-				application.setRuleIri(rule.getIri());
-				application.setInitialQuery(query);
-				application.setContextBinding(contextBinding);
-
-				retrieveLeftBindings(rule, application);
-
-				if(application.getLeftBinding().isEmpty()) {
+			for(HashMap<String, String> contextBindings : contextBindingsList) {
+				//retrieveLeftBindings(rule, application);
+				List<RuleApplication> tempApplications = retrieveLeftBindingsBis(rule, query, contextBindings);
+				
+				if(tempApplications.isEmpty()) {
 					continue;
 				}
-
-				getBoundRightTriples(rule, application);
-				applyTransformation(application);
-				generateExplanation(rule, application, sparqlEndpoint);
-				//application application
-				applications.add(application);
+				
+				for(RuleApplication application : tempApplications) {
+					getBoundRightTriples(rule, application);
+					applyTransformation(application);
+					generateExplanation(rule, application, sparqlEndpoint);
+				}
+				
+				applications.addAll(tempApplications);
 			}
 
 		} 
 		//Empty rule context
 		else {
-			RuleApplication application = new RuleApplication();
-			application.setRuleIri(rule.getIri());
-			application.setInitialQuery(query);
-			application.setContextBinding(new HashMap<String, String>());
-			retrieveLeftBindings(rule, application);
-			if(application.getLeftBinding().isEmpty()) {
+
+			//retrieveLeftBindings(rule, application);
+			applications = retrieveLeftBindingsBis(rule, query, new HashMap<String, String>());
+			if(applications.isEmpty()) {
 				return applications;
 			}
-
-			getBoundRightTriples(rule, application);
-
-			applyTransformation(application);
-			generateExplanation(rule, application, sparqlEndpoint);
-			applications.add(application);
+			
+			for(RuleApplication application : applications) {
+				getBoundRightTriples(rule, application);
+				applyTransformation(application);
+				generateExplanation(rule, application, sparqlEndpoint);
+			}
+			
 		}
 
 		return applications;
@@ -109,7 +111,7 @@ public class RuleApplyer {
 
 		//Now, the objective is to  identify all the IRI which are part of the explanation
 		//A SPARQL query is generated to retrieve their potential labels 
-		
+
 		String query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
 				"PREFIX dcterms: <http://purl.org/dc/terms/>\n" + 
 				"SELECT";
@@ -122,7 +124,6 @@ public class RuleApplyer {
 
 		int i = 0;
 		while (matcher.find()) {
-			logger.info("Match " + matcher.group());
 			varsAssociations.put("?rdfs" + i, matcher.group());
 			varsAssociations.put("?dc" + i, matcher.group());
 
@@ -137,9 +138,8 @@ public class RuleApplyer {
 			application.setExplanation(explanation);
 			return;
 		}
-		
+
 		query+= varsPattern + " {\n" + graphPattern + "}";
-		logger.info("Query " + query);
 
 		ResultSet results = JenaWrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
@@ -169,8 +169,7 @@ public class RuleApplyer {
 
 		String query = generateContextQuery(rule);
 
-		logger.debug(query);
-		List<String> variables = getBindingVariables(rule.getContext());
+		List<String> variables = getVariablesFromString(rule.getContext());
 
 		//Execute the query over the SPARQL endpoint
 		ResultSet results = JenaWrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
@@ -306,7 +305,128 @@ public class RuleApplyer {
 		application.setLeftBinding(leftBindings);
 		application.setLeftTriples(boundLeftTriples);
 
+	}
 
+	public List<RuleApplication> retrieveLeftBindingsBis (TransformationRule rule, Query query, HashMap<String, String> contextBindings) {
+		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(query);
+		List<RuleApplication> applications = new ArrayList<RuleApplication>();
+		RuleApplication application;
+		//First, we construct the left triples by assigning context binding variable values
+		List<Triple> leftTriples = getBoundLeftTriples(rule, query, contextBindings);
+
+		/*We need to find associations between 
+		 * context bindings related to the rule context and 
+		 * the left pattern of the transformation rule */
+		List<Triple> boundLeftTriples = new ArrayList<>();
+
+		HashMap<String, String> leftBindings = new HashMap<>();
+
+		Model model = ModelFactory.createDefaultModel();
+
+		for(Triple queryTriple : queryTriples) {
+			model.getGraph().add(queryTriple);
+
+		}
+
+		String leftAsString = "";
+
+		for(Triple leftTriple : leftTriples) {
+			leftAsString += leftTriple + "\n";
+		}
+
+		//Construct and execute the SPARQL query for querying the input SPARQL query body
+		String bodyQuery = "SELECT "; 
+
+		List<String> variables = getVariablesFromString(leftAsString);
+
+		for(String var : variables) {
+			bodyQuery += var + " ";
+		}
+
+		bodyQuery += "WHERE { \n";
+
+		for(Triple leftTriple : leftTriples) {
+			String subject, predicate, object;
+			
+			if(leftTriple.getSubject().isURI()) {
+				subject = "<" + leftTriple.getSubject() + ">";
+			} else {
+				subject = leftTriple.getSubject().toString();
+			}
+			
+			if(leftTriple.getPredicate().isURI()) {
+				predicate = "<" + leftTriple.getPredicate() + ">";
+			} else {
+				predicate = leftTriple.getPredicate().toString();
+			}
+			
+			if(leftTriple.getObject().isURI()) {
+				object = "<" + leftTriple.getObject() + ">";
+			} else {
+				object = leftTriple.getObject().toString();
+			}
+			
+			bodyQuery += subject + " "
+					+ predicate + " "
+					+ object + " .\n";
+		}
+
+		bodyQuery += "}";
+
+		ResultSet results = JenaWrapper.executeLocalSelectQuery(bodyQuery, model);
+
+		while(results.hasNext()) {
+			application = new RuleApplication();
+			Binding binding = results.nextBinding();
+			leftBindings = new HashMap<String, String>();
+			boundLeftTriples = new ArrayList<>();
+			Iterator<Var> vars = binding.vars();
+			while (vars.hasNext()) {
+				Var jenaVar = vars.next();
+				String bindingValue = binding.get(jenaVar).toString();
+
+				leftBindings.put(jenaVar.toString(), bindingValue);
+			}
+
+
+
+			for(Triple leftTriple : leftTriples) {
+				Node subject = leftTriple.getSubject();
+				Node predicate = leftTriple.getPredicate();
+				Node object = leftTriple.getObject();
+
+				for(Entry<String, String> entry : leftBindings.entrySet()) {
+
+					if(subject.toString().equals(entry.getKey())) {
+						subject = NodeFactory.createURI(entry.getValue());
+					}
+
+					if(predicate.toString().equals(entry.getKey())) {
+						predicate = NodeFactory.createURI(entry.getValue());
+					}
+
+
+					if(object.toString().equals(entry.getKey())) {
+						object = NodeFactory.createURI(entry.getValue());
+					}
+
+				}
+
+				boundLeftTriples.add(new Triple(subject, predicate, object));
+
+			}
+
+			application.setRuleIri(rule.getIri());
+			application.setInitialQuery(query);
+			application.setContextBinding(contextBindings);
+			application.setLeftBinding(leftBindings);
+			application.setLeftTriples(boundLeftTriples);
+			applications.add(application);
+
+
+		}
+
+		return applications;
 	}
 
 	/**
@@ -347,9 +467,15 @@ public class RuleApplyer {
 		}
 
 		for(Entry<String, String> entry : application.getLeftBinding().entrySet()) {
+			String value = entry.getValue();
+			if(value.startsWith("http:") || value.startsWith("https:")) {
+				value = "<" + value + ">";
+			}
+
 			boundRight = boundRight.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
-					entry.getValue());
+					value);
 		}
+
 
 		Element boundRightPattern = ParserARQ.parseElement("{" + boundRight + "}");
 		List<Triple> boundRightTriples = QueryUtils.extractTriplePatterns(boundRightPattern);
@@ -372,13 +498,24 @@ public class RuleApplyer {
 		List<Triple> rightTriples = application.getRightTriples();		
 		List<Triple> appLeftTriples = application.getLeftTriples();
 
-		for(int j = 0; j < queryTriples.size(); j++) {	
-			//We don't include triples part of the left graph pattern (as they are supposed to be replaced with right graph pattern)
-			if(!appLeftTriples.contains(queryTriples.get(j))){
-				graphPattern.addTriple(queryTriples.get(j));
-			}
+		first:
+			for(int j = 0; j < queryTriples.size(); j++) {	
+				//We don't include triples part of the left graph pattern (as they are supposed to be replaced with right graph pattern)
+				Triple qt = queryTriples.get(j);
 
-		}
+				for(Triple t : appLeftTriples) {
+					if(t.getSubject().toString().equals(qt.getSubject().toString()) &&
+							t.getPredicate().toString().equals(qt.getPredicate().toString()) &&
+							t.getObject().toString().equals(qt.getObject().toString())
+							){ 
+						continue first;
+					}
+				}
+
+				if(!appLeftTriples.contains(queryTriples.get(j))){
+					graphPattern.addTriple(queryTriples.get(j));
+				}
+			}
 
 		//Add all right graph pattern
 		for(int i = 0 ; i < rightTriples.size() ; i++) {
@@ -398,13 +535,13 @@ public class RuleApplyer {
 	}
 
 	/**
-	 * Retrieve all variables that occur in the rule context
+	 * Retrieve all variables that occur in a String
 	 * @param context SQTRL rule context graph pattern
 	 * @return the variables as a String List
 	 */
-	private List<String> getBindingVariables(String context) {
+	private List<String> getVariablesFromString(String query) {
 		Pattern pattern = Pattern.compile("(\\?|\\$)[^\\s)({}]+");
-		Matcher matcher = pattern.matcher(context);
+		Matcher matcher = pattern.matcher(query);
 
 		List<String> variables = new ArrayList<>();
 
@@ -434,7 +571,7 @@ public class RuleApplyer {
 
 				if(!exception.toUpperCase().contains("FILTER")) {
 					generatedQuery += "FILTER NOT EXISTS { "
-							+ exception 
+							+ exception
 							+ " }\n";
 				} else {
 					generatedQuery += exception + "\n";
@@ -446,6 +583,5 @@ public class RuleApplyer {
 
 		return generatedQuery;
 	}
-
 
 }

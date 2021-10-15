@@ -26,13 +26,13 @@
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
+		<!-- <rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>
 			<right>?x ?q ?y</right>
 			<cost>2.0</cost>
 			<explanation>Generalize ?p in ?q</explanation>
-		</rule>
+		</rule>-->
 
 		<rule iri="http://sqtrl-rules/generic/4" label="Suppress triple">
 			<context></context>

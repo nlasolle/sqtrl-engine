@@ -117,5 +117,29 @@ public class RuleApplicationTest {
 			logger.info(ruleApplications);
 		}
 	}
+	
+	@ParameterizedTest
+	@CsvSource({
+		"http://sqtrl-rules/ahpo/1, queries/generic1.rq",
+	})
+	void testNonApplicableRule(String ruleIri, String queryFile) throws IOException {
+		TransformationRule rule = rules.stream()
+				.filter(r -> r.getIri().equals(ruleIri))
+				.findAny()
+				.orElse(null);
+
+		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
+		Query query = QueryUtils.parseQuery(queryAsString);
+
+		RuleApplyer ruleApplyer = new RuleApplyer();
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
+
+		if(ruleApplications.isEmpty()) {
+			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+		} else {
+			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info(ruleApplications);
+		}
+	}
 
 }
