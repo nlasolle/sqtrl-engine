@@ -13,6 +13,7 @@ import org.apache.jena.query.Query;
  *
  */
 public class RuleApplication {
+
 	private String ruleIri; // Id of the transformation rule;
 	private HashMap<String, String> contextBinding = new HashMap<>();
 	private HashMap<String, String> leftBinding = new HashMap<>();

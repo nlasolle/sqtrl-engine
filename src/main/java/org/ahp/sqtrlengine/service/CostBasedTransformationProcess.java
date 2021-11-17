@@ -18,7 +18,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	private double maxCost;
 
 	public CostBasedTransformationProcess(double maxCost, List<TransformationRule> rules, 
-			Query query, String sparqlEndpoint) {
+			String query, String sparqlEndpoint) {
 		super(rules, query, sparqlEndpoint);
 		this.maxCost = maxCost;
 
@@ -37,7 +37,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	 * 
 	 * @return true if a node has been created
 	 */
-	public boolean getNextNode() {
+	public TransformationNode getNextNode() {
 
 		/* At this step, the rule list is supposed to be ordered based on their transformation costs.
 		   The goal is to find the rule applicable with the lower total cost
@@ -75,15 +75,16 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 						nodes.add(pendingNode);
 
 						existingNode.addAppliedRuleIRI(rule.getIri());
+						pendingNode.setId(existingNode.getId() + existingNode.getAppliedRuleIRI().size());
 						logger.info("Pending node application " + pendingNode.getApplication());
 						logger.info("Pending node cost " + pendingNode.getGlobalCost());
-						return true;
+						return pendingNode;
 					}
 				}
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	/**

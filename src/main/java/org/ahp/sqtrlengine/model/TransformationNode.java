@@ -1,10 +1,12 @@
 package org.ahp.sqtrlengine.model;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransformationNode {
-	
+
+
 	//Sum of all required transformation costs
 	private double globalCost; 
 	
@@ -12,6 +14,8 @@ public class TransformationNode {
 	private int position; 
 	
 	private int level;
+	
+	private String id;
 	
 	//Direct parent node
 	private TransformationNode parentNode;
@@ -92,6 +96,14 @@ public class TransformationNode {
 
 	public void addAppliedRuleIRI(String IRI) {
 		appliedRuleIRI.add(IRI);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }

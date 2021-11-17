@@ -31509,3 +31509,1185 @@ explanation=Make optional the triple ?l http://e-hp.ahp-numerique.fr/ahpo#sentBy
 2021-10-15 12:41:32,500 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/5
 2021-10-15 12:41:32,500 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/5
 2021-10-15 12:41:32,500 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/5
+2021-10-19 16:53:57,400 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-10-19 16:53:57,405 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-10-19 16:53:57,407 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-10-19 16:53:57,606 INFO o.a.s.s.TransformationProcess [main] Pending node application {ruleIri=http://sqtrl-rules/ahpo/1,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=?c, ?l=?l2},
+leftTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo ?c],
+rightTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?c, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/843],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a .
+    ?l2  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+         ahpo:sentTo  ?c .
+    ?l   a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a ;
+         a            ahpo:Letter .
+    ?l2  ahpo:sentBy  ?c ;
+         ahpo:sentTo  <http://henripoincare.fr/api/items/843>
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Exchange the sender (http://henripoincare.fr/api/items/843) and the recipient (?c) of the letter}
+2021-10-19 16:53:57,607 INFO o.a.s.s.TransformationProcess [main] Pending node cost 2.0
+2021-10-19 16:53:57,607 INFO o.a.s.TransformationProcessTest [main] Tour 1
+2021-10-19 16:53:57,607 INFO o.a.s.TransformationProcessTest [main] Size of nodes 2
+2021-10-19 16:53:57,607 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-10-19 16:53:57,610 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-10-19 16:53:57,613 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-10-19 16:53:57,615 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-10-19 16:53:57,621 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-10-19 16:53:57,624 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/4
+2021-11-09 11:17:35,463 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:17:35,663 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/ahpo/2 and for query file queries/ahpo2.rq
+2021-11-09 11:17:35,703 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/2,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/785, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/785, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy    <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/963> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/963> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the sender (http://henripoincare.fr/api/items/785) by one of the quoted persons (http://henripoincare.fr/api/items/551)}, {ruleIri=http://sqtrl-rules/ahpo/2,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy    <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/963> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentTo  <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/963> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the sender (http://henripoincare.fr/api/items/843) by one of the quoted persons (http://henripoincare.fr/api/items/551)}]
+2021-11-09 11:17:35,723 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:17:35,723 INFO o.a.s.RuleApplicationTest [main] 1 applications for rule http://sqtrl-rules/ahpo/3 and for query file queries/ahpo3.rq
+2021-11-09 11:17:35,723 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/3,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/365, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/365, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the recipient (http://henripoincare.fr/api/items/365) by one of the quoted persons (http://henripoincare.fr/api/items/551)}]
+2021-11-09 11:17:35,743 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/4
+2021-11-09 11:17:40,549 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/5
+2021-11-09 11:17:44,683 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/6
+2021-11-09 11:17:44,688 INFO o.a.s.RuleApplicationTest [main] No application for rule http://sqtrl-rules/ahpo/6 and for query file queries/ahpo6.rq
+2021-11-09 11:17:44,703 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/1
+2021-11-09 11:17:48,828 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/2
+2021-11-09 11:17:52,923 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/4
+2021-11-09 11:17:52,933 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/generic/4 and for query file queries/generic4.rq
+2021-11-09 11:17:52,933 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/generic/4,
+contextBinding={},
+leftBinding={?p=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, ?x=?l, ?y=http://e-hp.ahp-numerique.fr/ahpo#Letter},
+leftTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+rightTriples=[],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Suppress the triple ?l http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://e-hp.ahp-numerique.fr/ahpo#Letter}, {ruleIri=http://sqtrl-rules/generic/4,
+contextBinding={},
+leftBinding={?p=http://e-hp.ahp-numerique.fr/ahpo#sentBy, ?x=?l, ?y=?x},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+rightTriples=[],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  a  ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Suppress the triple ?l http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x}]
+2021-11-09 11:17:52,943 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/5
+2021-11-09 11:17:52,943 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/generic/5 and for query file queries/generic5.rq
+2021-11-09 11:17:52,943 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/generic/5,
+contextBinding={},
+leftBinding={?p=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, ?x=?l, ?y=http://e-hp.ahp-numerique.fr/ahpo#Letter},
+leftTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+rightTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+explanation=Make optional the triple ?l http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://e-hp.ahp-numerique.fr/ahpo#Letter}, {ruleIri=http://sqtrl-rules/generic/5,
+contextBinding={},
+leftBinding={?p=http://e-hp.ahp-numerique.fr/ahpo#sentBy, ?x=?l, ?y=?x},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  a            ahpo:Letter ;
+        ahpo:sentBy  ?x
+  }
+,
+explanation=Make optional the triple ?l http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x}]
+2021-11-09 11:17:54,883 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:17:55,028 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/ahpo/2 and for query file queries/ahpo2.rq
+2021-11-09 11:17:55,058 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/2,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/785, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/785, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy    <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/963> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/963> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the sender (http://henripoincare.fr/api/items/785) by one of the quoted persons (http://henripoincare.fr/api/items/551)}, {ruleIri=http://sqtrl-rules/ahpo/2,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy    <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/963> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentTo  <http://henripoincare.fr/api/items/365> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/785> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/963> ;
+        ahpo:sentBy  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the sender (http://henripoincare.fr/api/items/843) by one of the quoted persons (http://henripoincare.fr/api/items/551)}]
+2021-11-09 11:17:55,073 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:17:55,083 INFO o.a.s.RuleApplicationTest [main] 1 applications for rule http://sqtrl-rules/ahpo/3 and for query file queries/ahpo3.rq
+2021-11-09 11:17:55,083 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/3,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/365, ?y=http://henripoincare.fr/api/items/551, ?l=?l},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/365, ?l @http://e-hp.ahp-numerique.fr/ahpo#citeName http://henripoincare.fr/api/items/551],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/551],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy    <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo    <http://henripoincare.fr/api/items/365> ;
+        ahpo:citeName  <http://henripoincare.fr/api/items/551>
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+        ahpo:sentTo  <http://henripoincare.fr/api/items/551>
+  }
+,
+explanation=Replace the recipient (http://henripoincare.fr/api/items/365) by one of the quoted persons (http://henripoincare.fr/api/items/551)}]
+2021-11-09 11:17:55,093 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/4
+2021-11-09 11:17:57,078 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:17:57,088 INFO o.a.s.RuleApplicationTest [main] 1 applications for rule http://sqtrl-rules/ahpo/1 and for query file queries/generic1.rq
+2021-11-09 11:17:57,088 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/1,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=?c, ?l=?l2},
+leftTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo ?c],
+rightTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?c, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/843],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a .
+    ?l2  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+         ahpo:sentTo  ?c .
+    ?l   a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a ;
+         a            ahpo:Letter .
+    ?l2  ahpo:sentBy  ?c ;
+         ahpo:sentTo  <http://henripoincare.fr/api/items/843>
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Exchange the sender (http://henripoincare.fr/api/items/843) and the recipient (?c) of the letter}]
+2021-11-09 11:17:57,113 INFO o.a.s.RuleParserTest [main] [http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}, http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}]
+2021-11-09 11:17:57,233 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-11-09 11:17:57,263 ERROR o.a.s.s.XMLRuleParser [main] cvc-complex-type.2.4.a: Invalid content was found starting with element 'cost'. One of '{exception, explanation}' is expected.
+2021-11-09 11:17:57,303 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-11-09 11:17:57,303 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-11-09 11:17:57,308 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:17:57,308 INFO o.a.s.s.TransformationProcess [main] Pending node application {ruleIri=http://sqtrl-rules/ahpo/1,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=?c, ?l=?l2},
+leftTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo ?c],
+rightTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?c, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/843],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a .
+    ?l2  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+         ahpo:sentTo  ?c .
+    ?l   a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a ;
+         a            ahpo:Letter .
+    ?l2  ahpo:sentBy  ?c ;
+         ahpo:sentTo  <http://henripoincare.fr/api/items/843>
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Exchange the sender (http://henripoincare.fr/api/items/843) and the recipient (?c) of the letter}
+2021-11-09 11:17:57,313 INFO o.a.s.s.TransformationProcess [main] Pending node cost 2.0
+2021-11-09 11:17:57,313 INFO o.a.s.TransformationProcessTest [main] Tour 1
+2021-11-09 11:17:57,313 INFO o.a.s.TransformationProcessTest [main] Size of nodes 2
+2021-11-09 11:17:57,318 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:17:57,318 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:17:57,323 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:17:57,323 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:17:57,327 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:17:57,327 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/4
+2021-11-09 11:17:59,863 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/5
+2021-11-09 11:18:03,983 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/6
+2021-11-09 11:18:03,983 INFO o.a.s.RuleApplicationTest [main] No application for rule http://sqtrl-rules/ahpo/6 and for query file queries/ahpo6.rq
+2021-11-09 11:18:04,003 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/1
+2021-11-09 11:18:08,113 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/2
+2021-11-09 11:18:12,233 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/4
+2021-11-09 11:18:12,233 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/generic/4 and for query file queries/generic4.rq
+2021-11-09 11:18:12,233 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/generic/4,
+contextBinding={},
+leftBinding={?p=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, ?x=?l, ?y=http://e-hp.ahp-numerique.fr/ahpo#Letter},
+leftTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+rightTriples=[],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Suppress the triple ?l http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://e-hp.ahp-numerique.fr/ahpo#Letter}, {ruleIri=http://sqtrl-rules/generic/4,
+contextBinding={},
+leftBinding={?p=http://e-hp.ahp-numerique.fr/ahpo#sentBy, ?x=?l, ?y=?x},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+rightTriples=[],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  a  ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Suppress the triple ?l http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x}]
+2021-11-09 11:18:12,243 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/generic/5
+2021-11-09 11:18:12,248 INFO o.a.s.RuleApplicationTest [main] 2 applications for rule http://sqtrl-rules/generic/5 and for query file queries/generic5.rq
+2021-11-09 11:18:12,248 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/generic/5,
+contextBinding={},
+leftBinding={?p=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, ?x=?l, ?y=http://e-hp.ahp-numerique.fr/ahpo#Letter},
+leftTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+rightTriples=[?l @rdf:type http://e-hp.ahp-numerique.fr/ahpo#Letter],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+explanation=Make optional the triple ?l http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://e-hp.ahp-numerique.fr/ahpo#Letter}, {ruleIri=http://sqtrl-rules/generic/5,
+contextBinding={},
+leftBinding={?p=http://e-hp.ahp-numerique.fr/ahpo#sentBy, ?x=?l, ?y=?x},
+leftTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+rightTriples=[?l @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  ahpo:sentBy  ?x ;
+        a            ahpo:Letter
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l  a            ahpo:Letter ;
+        ahpo:sentBy  ?x
+  }
+,
+explanation=Make optional the triple ?l http://e-hp.ahp-numerique.fr/ahpo#sentBy ?x}]
+2021-11-09 11:18:16,398 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:18:16,403 INFO o.a.s.RuleApplicationTest [main] 1 applications for rule http://sqtrl-rules/ahpo/1 and for query file queries/generic1.rq
+2021-11-09 11:18:16,403 INFO o.a.s.RuleApplicationTest [main] [{ruleIri=http://sqtrl-rules/ahpo/1,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=?c, ?l=?l2},
+leftTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo ?c],
+rightTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?c, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/843],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a .
+    ?l2  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+         ahpo:sentTo  ?c .
+    ?l   a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a ;
+         a            ahpo:Letter .
+    ?l2  ahpo:sentBy  ?c ;
+         ahpo:sentTo  <http://henripoincare.fr/api/items/843>
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Exchange the sender (http://henripoincare.fr/api/items/843) and the recipient (?c) of the letter}]
+2021-11-09 11:18:16,423 INFO o.a.s.RuleParserTest [main] [http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}, http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}]
+2021-11-09 11:18:16,478 ERROR o.a.s.s.XMLRuleParser [main] Premature end of file.
+2021-11-09 11:18:16,498 ERROR o.a.s.s.XMLRuleParser [main] cvc-complex-type.2.4.a: Invalid content was found starting with element 'cost'. One of '{exception, explanation}' is expected.
+2021-11-09 11:18:16,523 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-11-09 11:18:16,523 INFO o.a.s.s.TransformationProcess [main] [http://sqtrl-rules/ahpo/1 {
+	label = Switch sender and recipient
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y . ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x
+	exceptions = []
+	cost = 2.0
+	explanation = Exchange the sender (?x) and the recipient (?y) of the letter
+}, http://sqtrl-rules/ahpo/2 {
+	label = Replace sender by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentBy> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the sender (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/3 {
+	label = Replace recipient by quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?x . ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?y
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#sentTo> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replace the recipient (?x) by one of the quoted persons (?y)
+}, http://sqtrl-rules/ahpo/4 {
+	label = Replace subject with another related subject
+	context = ?l2 <http://purl.org/dc/terms/subject> ?x . ?l2 <http://purl.org/dc/terms/subject> ?y
+	left = ?l1 <http://purl.org/dc/terms/subject> ?x
+	right = ?l1 <http://purl.org/dc/terms/subject> ?y
+	exceptions = [FILTER(?x != ?y)]
+	cost = 3.0
+	explanation = Replacing a subject (?x) by another related subject (?y)
+}, http://sqtrl-rules/ahpo/5 {
+	label = Replace correspondent with subject related sender
+	context = ?l1 <http://purl.org/dc/terms/subject> ?s . ?l2 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y . ?l2 <http://purl.org/dc/terms/subject> ?s
+	left = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l1 <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?y
+	exceptions = []
+	cost = 3.0
+	explanation = Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)
+}, http://sqtrl-rules/ahpo/6 {
+	label = Transform correspondent as a quoted person
+	context = 
+	left = ?l <http://e-hp.ahp-numerique.fr/ahpo#correspondent> ?x
+	right = ?l <http://e-hp.ahp-numerique.fr/ahpo#citeName> ?x
+	exceptions = []
+	cost = 3.0
+	explanation = Remove a correspondent (?x) and set it as one of the quoted persons
+}, http://sqtrl-rules/generic/1 {
+	label = Generalize object class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?x ?p ?C
+	right = ?x ?p ?D
+	exceptions = [?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?X . ?X <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D, FILTER(?C != ?D)]
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/2 {
+	label = Generalize subject class
+	context = ?C <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?D
+	left = ?C ?p ?x
+	right = ?D ?p ?x
+	exceptions = []
+	cost = 5.0
+	explanation = Generalizing ?C in ?D
+}, http://sqtrl-rules/generic/4 {
+	label = Suppress triple
+	context = 
+	left = ?x ?p ?y
+	right = 
+	exceptions = []
+	cost = 8.0
+	explanation = Suppress the triple ?x ?p ?y
+}, http://sqtrl-rules/generic/5 {
+	label = Make triple optional
+	context = 
+	left = ?x ?p ?y
+	right = OPTIONAL{?x ?p ?y}
+	exceptions = []
+	cost = 8.0
+	explanation = Make optional the triple ?x ?p ?y
+}]
+2021-11-09 11:18:16,523 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:18:16,528 INFO o.a.s.s.TransformationProcess [main] Pending node application {ruleIri=http://sqtrl-rules/ahpo/1,
+contextBinding={},
+leftBinding={?x=http://henripoincare.fr/api/items/843, ?y=?c, ?l=?l2},
+leftTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy http://henripoincare.fr/api/items/843, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo ?c],
+rightTriples=[?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentBy ?c, ?l2 @http://e-hp.ahp-numerique.fr/ahpo#sentTo http://henripoincare.fr/api/items/843],
+initialQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a .
+    ?l2  ahpo:sentBy  <http://henripoincare.fr/api/items/843> ;
+         ahpo:sentTo  ?c .
+    ?l   a            ahpo:Letter
+    FILTER ( ?x = "Tutu" )
+  }
+,
+generatedQuery=PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l
+WHERE
+  { ?l   ahpo:sentBy  ?a ;
+         a            ahpo:Letter .
+    ?l2  ahpo:sentBy  ?c ;
+         ahpo:sentTo  <http://henripoincare.fr/api/items/843>
+    FILTER ( ?x = "Tutu" )
+  }
+,
+explanation=Exchange the sender (http://henripoincare.fr/api/items/843) and the recipient (?c) of the letter}
+2021-11-09 11:18:16,528 INFO o.a.s.s.TransformationProcess [main] Pending node cost 2.0
+2021-11-09 11:18:16,533 INFO o.a.s.TransformationProcessTest [main] Tour 1
+2021-11-09 11:18:16,533 INFO o.a.s.TransformationProcessTest [main] Size of nodes 2
+2021-11-09 11:18:16,533 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/1
+2021-11-09 11:18:16,533 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:18:16,538 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/2
+2021-11-09 11:18:16,538 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:18:16,543 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/3
+2021-11-09 11:18:16,543 DEBUG o.a.s.s.RuleApplyer [main] Searching for applications for rule http://sqtrl-rules/ahpo/4

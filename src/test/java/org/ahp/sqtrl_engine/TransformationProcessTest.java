@@ -4,25 +4,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.Prefix;
-import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.CostBasedTransformationProcess;
-import org.ahp.sqtrlengine.service.RuleApplyer;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
-import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
-import org.apache.jena.query.Query;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
@@ -49,15 +43,14 @@ public class TransformationProcessTest {
 	@ValueSource(strings = {"queries/generic1.rq"})
 	void testCostBasedTransformationProcess(String queryFile) throws IOException {
 		
-		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		Query query = QueryUtils.parseQuery(queryAsString);
+		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
+
 		
-		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12,
-				rules, query, SPARQL_ENDPOINT);
+		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT);
 		
 		transformationProcess.sortRules();
 		int i = 0;
-		while(transformationProcess.getNextNode()) {
+		while(transformationProcess.getNextNode() != null) {
 			i++;
 			logger.info("Tour " + i);
 			logger.info("Size of nodes " + transformationProcess.getNodes().size());

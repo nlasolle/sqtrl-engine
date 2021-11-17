@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.model.TransformationNode;
 import org.ahp.sqtrlengine.model.TransformationRule;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.query.Query;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,14 +28,15 @@ public abstract class TransformationProcess {
 	
 	protected ArrayList<TransformationNode> nodes = new ArrayList<>();
 	
-	public TransformationProcess(List<TransformationRule> rules, Query query, String sparqlEndpoint) {
+	public TransformationProcess(List<TransformationRule> rules, String query, String sparqlEndpoint) {
 		this.rules = rules;
-		this.query = query;
+		this.query = QueryUtils.parseQuery(query);
 		this.sparqlEndpoint = sparqlEndpoint;
 		ruleApplyer = new RuleApplyer(sparqlEndpoint);
 		TransformationNode initialNode = new TransformationNode();
 		initialNode.setLevel(0);
 		initialNode.setGlobalCost(0);
+		initialNode.setId("Q");
 		nodes.add(initialNode);
 	}
 

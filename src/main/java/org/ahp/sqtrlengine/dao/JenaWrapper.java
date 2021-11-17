@@ -25,6 +25,11 @@ import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
 
+/**
+ * Interface to dialog with an RDF base using Jena API
+ * @author Nicolas Lasolle
+ *
+ */
 public class JenaWrapper {
 
 	//RDF Model containing all the triples of the database (multiple files)
@@ -41,6 +46,10 @@ public class JenaWrapper {
 	QueryExecution qExec;
 	private static Logger LOGGER = Logger.getLogger(JenaWrapper.class.getName());
 	
+	/**
+	 * 
+	 * @param endpoint sparql endpoint iri
+	 */
 	public JenaWrapper(String endpoint) {
 		conn = RDFConnectionFactory.connect(endpoint);
 	}
