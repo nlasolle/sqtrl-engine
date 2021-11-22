@@ -66,16 +66,26 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 					if(applications != null && !applications.isEmpty()) {
 						TransformationNode pendingNode = new TransformationNode();
 						//The rule application details are saved for the newly formed node
-						pendingNode.setGlobalCost(existingNode.getGlobalCost() + rule.getCost());
+					
+						RuleApplication application = applications.remove(0);
+						
+						//Find the cost for the given rule IRI
+						TransformationRule currentRule = rules.stream()
+								  .filter(r -> application.getRuleIri().equals(r.getIri()))
+								  .findAny()
+								  .orElse(null);
+						pendingNode.setGlobalCost(existingNode.getGlobalCost() + currentRule.getCost());
+
+						 
 						pendingNode.setParentNode(existingNode);
 						pendingNode.setLevel(existingNode.getLevel() + 1);
-						RuleApplication application = applications.remove(0);
 						pendingNode.setApplication(application);
 						existingNode.setPendingApplications(applications);
+						existingNode.addAppliedRuleIRI(currentRule.getIri());
 						nodes.add(pendingNode);
-
-						existingNode.addAppliedRuleIRI(rule.getIri());
+						
 						pendingNode.setId(existingNode.getId() + existingNode.getAppliedRuleIRI().size());
+						
 						logger.info("Pending node application " + pendingNode.getApplication());
 						logger.info("Pending node cost " + pendingNode.getGlobalCost());
 						return pendingNode;

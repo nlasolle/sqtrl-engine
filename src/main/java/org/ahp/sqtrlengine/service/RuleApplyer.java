@@ -102,7 +102,8 @@ public class RuleApplyer {
 	 */
 	private void generateExplanation(TransformationRule rule, RuleApplication application, String sparqlEndpoint) {
 		String explanation = rule.getExplanation();
-
+		logger.info("EXPLANATION GENERATION");
+		
 		for(Entry<String, String> entry : application.getContextBinding().entrySet()) {
 			explanation = explanation.replaceAll(entry.getKey().replaceAll("\\?", "\\\\?").replaceAll("\\$", "\\\\$"), 
 					entry.getValue());
@@ -122,8 +123,9 @@ public class RuleApplyer {
 
 		String varsPattern = "", graphPattern = "";
 
-		Pattern pattern = Pattern.compile("<[^\\s]*>");
+		Pattern pattern = Pattern.compile("(http|https):/[^\\)\\s]*");
 		Matcher matcher = pattern.matcher(explanation);
+		logger.info(explanation);
 		HashMap<String, String> varsAssociations = new HashMap<>();
 
 		int i = 0;
@@ -131,9 +133,11 @@ public class RuleApplyer {
 			varsAssociations.put("?rdfs" + i, matcher.group());
 			varsAssociations.put("?dc" + i, matcher.group());
 
-			varsPattern += " ?rdfs" + i + " ?dc" +i;
-			graphPattern += "OPTIONAL {" + matcher.group() + " rdfs:label ?rdfs" + i + "} .\n"
-					+ "OPTIONAL {" + matcher.group() + " dcterms:title ?dc" + i + "} . \n";
+			varsPattern += " (STR(?r" + i + ") AS ?rdfs" + i + ") (STR(?d" +i + ") AS ?dc" + i +")";
+			graphPattern += "OPTIONAL {<" + matcher.group() + "> rdfs:label ?r" + i + " .\n"
+					+ "FILTER ( LANG(?r" + i + ") = \"en\" || LANG(?r" + i + ") = \"\")} .\n"
+					+ "OPTIONAL {<" + matcher.group() + "> dcterms:title ?d" + i + " .\n"
+					+ "FILTER ( LANG(?d" + i + ") = \"en\" || LANG(?d" + i + ") = \"\")} .\n";
 			i++;
 		}
 
@@ -144,9 +148,9 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
-
+		logger.info("QUERY EXPLANATION " + query);
 		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
-
+		
 		//Save the bindings with the values for each variable
 		if( results.hasNext() ){
 			QuerySolution solution = results.next();
@@ -160,6 +164,7 @@ public class RuleApplyer {
 			}
 		}
 		wrapper.closeExecution();
+		logger.info("Explanation generation !!!");
 		application.setExplanation(explanation);	
 	}
 

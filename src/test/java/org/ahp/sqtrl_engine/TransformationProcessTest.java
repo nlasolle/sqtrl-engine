@@ -40,7 +40,7 @@ public class TransformationProcessTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"queries/generic1.rq"})
+	@ValueSource(strings = {"queries/fullCaseQuery.rq"})
 	void testCostBasedTransformationProcess(String queryFile) throws IOException {
 		
 		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);

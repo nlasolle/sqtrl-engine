@@ -42,13 +42,13 @@
 			<explanation>Suppress the triple ?x ?p ?y</explanation>
 		</rule>
 		
-			<rule iri="http://sqtrl-rules/generic/5" label="Make triple optional">
+		<!--<rule iri="http://sqtrl-rules/generic/5" label="Make triple optional">
 			<context></context>
 			<left>?x ?p ?y</left>
 			<right>OPTIONAL{?x ?p ?y}</right>
 			<cost>8.0</cost>
 			<explanation>Make optional the triple ?x ?p ?y</explanation>
-		</rule>
+		</rule>-->
 
 		<rule iri="http://sqtrl-rules/ahpo/1" label="Switch sender and recipient">
 			<context></context>
@@ -63,7 +63,7 @@
 			<context></context>
 			<left>?l ahpo:sentBy ?x . ?l ahpo:citeName ?y</left>
 			<right>?l ahpo:sentBy ?y</right>
-			<cost>3.0</cost>
+			<cost>3.1</cost>
 			<explanation>Replace the sender (?x) by one of the quoted persons (?y)</explanation>
 		</rule>
 
@@ -71,7 +71,7 @@
 			<context></context>
 			<left>?l ahpo:sentTo ?x . ?l ahpo:citeName ?y</left>
 			<right>?l ahpo:sentTo ?y</right>
-			<cost>3.0</cost>
+			<cost>3.2</cost>
 			<explanation>Replace the recipient (?x) by one of the quoted persons (?y)</explanation>
 		</rule>
 
@@ -80,7 +80,7 @@
 			<left>?l1 dcterms:subject ?x</left>
 			<right>?l1 dcterms:subject ?y</right>
 			<exception>FILTER(?x != ?y)</exception>
-			<cost>3.0</cost>
+			<cost>3.3</cost>
 			<explanation>Replacing a subject (?x) by another related subject (?y)</explanation>
 		</rule>
 
@@ -89,7 +89,7 @@
 			<context>?l1 dcterms:subject ?s . ?l2 ahpo:correspondent ?y . ?l2 dcterms:subject ?s</context>
 			<left>?l1 ahpo:correspondent ?x</left>
 			<right>?l1 ahpo:correspondent ?y</right>
-			<cost>3.0</cost>
+			<cost>3.4</cost>
 			<explanation>Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)</explanation>
 		</rule>
 
@@ -97,7 +97,7 @@
 			<context></context>
 			<left>?l ahpo:correspondent ?x</left>
 			<right>?l ahpo:citeName ?x</right>
-			<cost>3.0</cost>
+			<cost>3.5</cost>
 			<explanation>Remove a correspondent (?x) and set it as one of the quoted persons</explanation>
 		</rule>
 
