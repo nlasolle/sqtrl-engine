@@ -1,0 +1,12 @@
+PREFIX  dcterms: <http://purl.org/dc/terms/>
+PREFIX  ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT  ?l ?dest ?d
+WHERE
+  { ?dest  dcterms:title     ?name .
+    ?l     ahpo:writingDate  ?d ;
+           ahpo:citeName     <http://henripoincare.fr/api/items/333> ;
+           ahpo:sentBy       ?dest ;
+           ahpo:sentTo       <http://henripoincare.fr/api/items/843>
+  }
+LIMIT   50

@@ -38,16 +38,19 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	 * @return true if a node has been created
 	 */
 	public TransformationNode getNextNode() {
-
+		logger.info("---- GET NEXT NODE ----");
 		/* At this step, the rule list is supposed to be ordered based on their transformation costs.
 		   The goal is to find the rule applicable with the lower total cost
 		 */
+		double currentBestCost = maxCost;
+		TransformationNode pendingNode = null, candidateNode=null,  candidateExistingNode = null;
+		
 		for(TransformationRule rule: rules) {
 			for(TransformationNode existingNode : nodes) {
-
+				
 				if(!existingNode.getAppliedRuleIRI().contains(rule.getIri()) && 
-						(rule.getCost() + existingNode.getGlobalCost()) <= maxCost ) {
-	
+						(rule.getCost() + existingNode.getGlobalCost()) <= maxCost &&
+						(rule.getCost() + existingNode.getGlobalCost()) <= currentBestCost) {
 					List<RuleApplication> applications;
 
 					if(existingNode.getPendingApplications().isEmpty()) {
@@ -59,42 +62,48 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 						}
 
 						applications = ruleApplyer.getRuleApplications(nodeQuery, rule, sparqlEndpoint);
+						if((applications == null || applications.isEmpty()) && existingNode.getId().contentEquals("Q1")) {
+						}
 					} else {
+
 						applications = existingNode.getPendingApplications();
 					}
 
 					if(applications != null && !applications.isEmpty()) {
-						TransformationNode pendingNode = new TransformationNode();
+
+						pendingNode = new TransformationNode();
 						//The rule application details are saved for the newly formed node
-					
+
 						RuleApplication application = applications.remove(0);
-						
+
 						//Find the cost for the given rule IRI
 						TransformationRule currentRule = rules.stream()
-								  .filter(r -> application.getRuleIri().equals(r.getIri()))
-								  .findAny()
-								  .orElse(null);
+								.filter(r -> application.getRuleIri().equals(r.getIri()))
+								.findAny()
+								.orElse(null);
 						pendingNode.setGlobalCost(existingNode.getGlobalCost() + currentRule.getCost());
 
-						 
 						pendingNode.setParentNode(existingNode);
 						pendingNode.setLevel(existingNode.getLevel() + 1);
 						pendingNode.setApplication(application);
 						existingNode.setPendingApplications(applications);
-						existingNode.addAppliedRuleIRI(currentRule.getIri());
-						nodes.add(pendingNode);
-						
-						pendingNode.setId(existingNode.getId() + existingNode.getAppliedRuleIRI().size());
-						
+						//existingNode.addAppliedRuleIRI(currentRule.getIri());
+						candidateExistingNode = existingNode;
+						int idLastPart = existingNode.getAppliedRuleIRI().size() + 1;
+						pendingNode.setId(existingNode.getId() + idLastPart);
+						currentBestCost = pendingNode.getGlobalCost();
+						candidateNode = (TransformationNode) pendingNode.clone();
 						logger.info("Pending node application " + pendingNode.getApplication());
 						logger.info("Pending node cost " + pendingNode.getGlobalCost());
-						return pendingNode;
+						
 					}
 				}
 			}
 		}
-
-		return null;
+		//We need to save that the given rule has been applied for
+		candidateExistingNode.addAppliedRuleIRI(candidateNode.getApplication().getRuleIri());
+		nodes.add(candidateNode);
+		return candidateNode;
 	}
 
 	/**

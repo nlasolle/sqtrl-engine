@@ -12,9 +12,9 @@
 			<context>?C rdfs:subClassOf ?D</context>
 			<left>?x ?p ?C</left>
 			<right>?x ?p ?D</right>
-			<cost>5.0</cost>
 			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
-			<exception>FILTER(?C != ?D)</exception>
+			<exception>FILTER(?C = ?D)</exception>
+			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
@@ -22,17 +22,21 @@
 			<context>?C rdfs:subClassOf ?D</context>
 			<left>?C ?p ?x</left>
 			<right>?D ?p ?x</right>
+			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
+			<exception>FILTER(?C = ?D)</exception>
 			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
-		<!--  <rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
+		<rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>
 			<right>?x ?q ?y</right>
+			<exception>?p rdfs:subPropertyOf ?r . ?r rdfs:subPropertyOf ?q FILTER(?p != ?r &#38;&#38; ?q != ?r)</exception>
+			<exception>FILTER(?p = ?q)</exception>
 			<cost>2.0</cost>
 			<explanation>Generalize ?p in ?q</explanation>
-		</rule>-->
+		</rule>
 
 		<rule iri="http://sqtrl-rules/generic/4" label="Suppress triple">
 			<context></context>
@@ -41,7 +45,7 @@
 			<cost>8.0</cost>
 			<explanation>Suppress the triple ?x ?p ?y</explanation>
 		</rule>
-		
+				
 		<!--<rule iri="http://sqtrl-rules/generic/5" label="Make triple optional">
 			<context></context>
 			<left>?x ?p ?y</left>

@@ -1,5 +1,6 @@
 package org.ahp.sqtrl_engine;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,9 +9,12 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.Prefix;
+import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.CostBasedTransformationProcess;
+import org.ahp.sqtrlengine.service.RuleApplyer;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.jena.ext.com.google.common.io.Resources;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
-public class TransformationProcessTest {
+class TransformationProcessTest {
 	private static final Logger logger = LogManager.getLogger(TransformationProcessTest.class);
 	
 	private static List<TransformationRule> rules;
@@ -44,7 +48,7 @@ public class TransformationProcessTest {
 	void testCostBasedTransformationProcess(String queryFile) throws IOException {
 		
 		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-
+		
 		
 		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT);
 		
@@ -53,7 +57,28 @@ public class TransformationProcessTest {
 		while(transformationProcess.getNextNode() != null) {
 			i++;
 			logger.info("Tour " + i);
-			logger.info("Size of nodes " + transformationProcess.getNodes().size());
+		}
+	}
+	
+	@ParameterizedTest
+	@ValueSource(strings = {"queries/bugTestQuery.rq"})
+	void testRuleApplyer(String queryFile) throws IOException {
+		
+		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
+		String ruleIRI = "http://sqtrl-rules/ahpo/1";
+		TransformationRule rule = rules.stream()
+				.filter(r -> ruleIRI.equals(r.getIri()))
+				.findAny()
+				.orElse(null);
+		RuleApplyer applyer = new RuleApplyer(SPARQL_ENDPOINT);
+		
+		List<RuleApplication> applications = applyer.getRuleApplications(QueryUtils.parseQuery(query), rule, SPARQL_ENDPOINT);
+		
+		logger.info("Query " + QueryUtils.parseQuery(query));
+		logger.info("Rule " + rule);
+		logger.info("SPARQL ENDPOINT " + SPARQL_ENDPOINT);
+		for(RuleApplication a: applications) {
+			logger.info(a);
 		}
 	}
 
