@@ -16,7 +16,10 @@ public class RuleUtils {
 				rule.setRight(replaceAllPrefixes(rule.getRight(), prefix));
 
 				List<String> exceptions = new ArrayList<String>();
+
+				System.out.println("rule " + rule.getLabel());
 				for(String exception : rule.getExceptions()) {
+					System.out.println("exception " + exception);
 					exceptions.add(replaceAllPrefixes(exception, prefix));
 				}
 
@@ -36,6 +39,11 @@ public class RuleUtils {
 			int prefixIndex = field.indexOf(prefix.getPrefix());
 			int propertyIndex = prefixIndex + prefix.getPrefix().length();
 			int nextSpaceIndex = field.indexOf(" ", propertyIndex);
+			
+			if (nextSpaceIndex == -1) {
+				nextSpaceIndex = field.length(); 
+			}
+			
 			field = field.substring(0, 
 					prefixIndex)
 					+ "<"
@@ -44,6 +52,8 @@ public class RuleUtils {
 					+ ">"
 					+ field.substring(nextSpaceIndex);
 		}
+		
+		System.out.println("FIELD " + field);
 		return field;
 	}
 }

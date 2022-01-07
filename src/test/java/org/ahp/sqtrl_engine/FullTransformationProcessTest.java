@@ -31,7 +31,7 @@ public class FullTransformationProcessTest {
 	@BeforeAll
 	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
 		File validFile = new File(FullTransformationProcessTest.class.getClassLoader().getResource(RULE_FILE).getFile());
-
+		
 		XMLRuleParser parser = new XMLRuleParser(validFile);
 		parser.loadXMLDocument();
 		rules = parser.parseRuleFile();
@@ -44,8 +44,7 @@ public class FullTransformationProcessTest {
 	void testCostBasedTransformationProcess(String queryFile) throws IOException {
 		
 		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		
-		
+			
 		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT);
 		
 		transformationProcess.sortRules();

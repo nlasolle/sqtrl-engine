@@ -124,12 +124,16 @@ public class RuleApplyer {
 
 		String varsPattern = "", graphPattern = "";
 
-		Pattern pattern = Pattern.compile("(http|https):/[^\\)\\s]*");
+		Pattern pattern = Pattern.compile("(http|https):/[^\\)\\>\\s]*");
 		Matcher matcher = pattern.matcher(explanation);
+		System.out.println("THE GREATH MATCHER");
+		System.out.println(explanation);
+	
 		HashMap<String, String> varsAssociations = new HashMap<>();
 
 		int i = 0;
 		while (matcher.find()) {
+			System.out.println(matcher.group());
 			varsAssociations.put("?rdfs" + i, matcher.group());
 			varsAssociations.put("?dc" + i, matcher.group());
 
@@ -148,6 +152,7 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
+		logger.info("QUERY EXPLANATION BIS \n" + query);
 		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
 		//Save the bindings with the values for each variable
@@ -179,6 +184,7 @@ public class RuleApplyer {
 		List<String> variables = getVariablesFromString(rule.getContext());
 
 		//Execute the query over the SPARQL endpoint
+		logger.info("query bug " + query);
 		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
 		//Save the bindings with the values for each variable

@@ -101,8 +101,11 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 			}
 		}
 		//We need to save that the given rule has been applied for
-		candidateExistingNode.addAppliedRuleIRI(candidateNode.getApplication().getRuleIri());
-		nodes.add(candidateNode);
+		if(candidateNode != null) {
+			candidateExistingNode.addAppliedRuleIRI(candidateNode.getApplication().getRuleIri());
+			nodes.add(candidateNode);
+		}
+		
 		return candidateNode;
 	}
 

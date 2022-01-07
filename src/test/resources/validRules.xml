@@ -1,6 +1,7 @@
 <SQTRule>
 
 	<prefixes>
+		<prefix label ="rdf:" iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></prefix>
 		<prefix label="rdfs:" iri="http://www.w3.org/2000/01/rdf-schema#"></prefix>
 		<prefix label="ahpo:" iri="http://e-hp.ahp-numerique.fr/ahpo#"></prefix>
 		<prefix label="dcterms:" iri="http://purl.org/dc/terms/"></prefix>
@@ -12,7 +13,7 @@
 			<context>?C rdfs:subClassOf ?D</context>
 			<left>?x ?p ?C</left>
 			<right>?x ?p ?D</right>
-			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
+			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X &#38;&#38; ?X != ?D)</exception>
 			<exception>FILTER(?C = ?D)</exception>
 			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
@@ -28,7 +29,23 @@
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/3" label="Generalize predicate">
+		<rule iri="http://sqtrl-rules/generic/3" label="Generalize object instance">
+		   <context>?o a ?C</context>
+		   <left>?s ?p ?o</left>
+		   <right>?s ?p ?x . ?x a ?o</right>
+		   <cost>5.0</cost>
+		   <explanation>Generalize ?o in any instance of ?C</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/generic/4" label="Generalize subject instance">
+		   <context>?s a ?C</context>
+		   <left>?s ?p ?o</left>
+		   <right>?x ?p ?o . ?x a ?C</right>
+		   <cost>5.0</cost>
+		   <explanation>Generalize ?s in any instance of ?C</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/generic/5" label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>
 			<right>?x ?q ?y</right>
@@ -38,7 +55,7 @@
 			<explanation>Generalize ?p in ?q</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/4" label="Suppress triple">
+		<rule iri="http://sqtrl-rules/generic/6" label="Suppress triple">
 			<context></context>
 			<left>?x ?p ?y</left>
 			<right></right>
@@ -104,6 +121,33 @@
 			<cost>3.5</cost>
 			<explanation>Remove a correspondent (?x) and set it as one of the quoted persons</explanation>
 		</rule>
+
+		<rule iri="http://sqtrl-rules/ahpo/7" label="Replace individual label property">
+			<context></context>
+			<left>?x rdfs:label ?y</left>
+			<right>? dcterms:title ?y</right>
+			<exception>?x a rdf:Property</exception>
+			<exception>?x a rdfs:Literal</exception>
+			<cost>0.0</cost>
+			<explanation>Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label)
+				for an individual</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/ahpo/8" label="Replace property label property">
+			<context>?x a rdf:Property</context>
+			<left>?p dcterms:title ?y</left>
+			<right>?p rdfs:label ?y</right>
+			<cost>0.0</cost>
+			<explanation>Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label)
+				for a property</explanation>
+		</rule>
+
+		<!--<filteringRule iri="http://sqtrl-rules/ahpo/9" label="Writing date minor extension">
+			<left>?l ahpo:writingDate ?d</left>
+			<leftFilter>FILTER(YEAR(?d) &gt;= a &#38;&#38; YEAR(?d) &lt;= b)</leftFilter>
+			<rightFilter>FILTER(YEAR(?d) &gt;= a - 2 &#38;&#38; YEAR(?d) &lt;= b + 2)</rightFilter>
+			<explanation>Extend the bounds related to the writing date of the letter (?l): 2 years for each bound</explanation>
+		</rule>-->
 
 		<!-- <rule iri="http://sqtrl-rules/ahpo/7" label="Replace the place of archive">
 			<context>?l1 ahpo:archivedAt ?x . ?l1 ahpo:hasAddress ?a1 . ?a1
