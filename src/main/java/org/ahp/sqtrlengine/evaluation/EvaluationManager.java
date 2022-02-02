@@ -40,7 +40,7 @@ public class EvaluationManager {
 		Instant start = Instant.now() ; 
 
 		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(combination.getMaxCost(), 
-				combination.getRules(), combination.getQuery(), combination.getDataset());
+				combination.getRules(), combination.getQuery(), combination.getDataset(), combination.isPruning());
 
 		transformationProcess.sortRules();
 		
@@ -125,7 +125,11 @@ public class EvaluationManager {
 		String bigQuery = Resources.toString(EvaluationManager.class.getClassLoader().getResource(bigQueryFile), StandardCharsets.UTF_8);
 		
 		combinations.add(new ParameterCombination(true, 2, false, mediumRuleSet, fullAhpDataset , mediumQuery));
-		combinations.add(new ParameterCombination(false, 4, true, mediumRuleSet, fullAhpDataset , smallQuery));
+		combinations.add(new ParameterCombination(true, 2, true, mediumRuleSet, fullAhpDataset , mediumQuery));
+		combinations.add(new ParameterCombination(true, 4, false, mediumRuleSet, fullAhpDataset , mediumQuery));
+		combinations.add(new ParameterCombination(true, 4, true, mediumRuleSet, fullAhpDataset , mediumQuery));
+		combinations.add(new ParameterCombination(true, 10, false, mediumRuleSet, fullAhpDataset , mediumQuery));
+		combinations.add(new ParameterCombination(true, 10, true, mediumRuleSet, fullAhpDataset , mediumQuery));
 
 		return combinations;
 

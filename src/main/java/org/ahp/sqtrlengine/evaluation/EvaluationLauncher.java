@@ -24,7 +24,7 @@ public class EvaluationLauncher {
 				results.add(result);
 			}
 		}
-
+		
 		//Export of the full results list in a CSV file
 		ResultsExporter exporter = new ResultsExporter();
 		exporter.export(results);

@@ -109,5 +109,33 @@ public class QueryUtils {
 		return filters;
 	}
 
+	/**
+	 * Simple check for query equivalence (triple patterns list and filters)
+	 * @param q1 first SPARQL query
+	 * @param q2 second SPARQL query
+	 * @return true if the queries are equivalent
+	 */
+	public static boolean equivalent(Query q1, Query q2) {
+		List<Triple> tp1 = QueryUtils.extractTriplePatterns(q1);
+		List<Triple> tp2 = QueryUtils.extractTriplePatterns(q2);
+		
+		for(Triple t : tp1) {
+			if(!tp2.contains(t)) {
+				return false;
+			}
+		}
+		
+		List<ElementFilter> fp1 = QueryUtils.extractFilters(q1);
+		List<ElementFilter> fp2 = QueryUtils.extractFilters(q1);
+		
+		for(ElementFilter f : fp1) {
+			if(!fp2.contains(f)) {
+				return false;
+			}
+		}
+		
+		
+		return true;
+	}
 
 }

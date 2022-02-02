@@ -117,4 +117,74 @@ public class TransformationNode implements Cloneable{
 		return o;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((application == null) ? 0 : application.hashCode());
+		result = prime * result + ((appliedRuleIRI == null) ? 0 : appliedRuleIRI.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(globalCost);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + (isLeafNode ? 1231 : 1237);
+		result = prime * result + level;
+		result = prime * result + ((parentNode == null) ? 0 : parentNode.hashCode());
+		result = prime * result + ((pendingApplications == null) ? 0 : pendingApplications.hashCode());
+		result = prime * result + position;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TransformationNode other = (TransformationNode) obj;
+		if (application == null) {
+			if (other.application != null)
+				return false;
+		} else if (!application.equals(other.application))
+			return false;
+		if (appliedRuleIRI == null) {
+			if (other.appliedRuleIRI != null)
+				return false;
+		} else if (!appliedRuleIRI.equals(other.appliedRuleIRI))
+			return false;
+		if (Double.doubleToLongBits(globalCost) != Double.doubleToLongBits(other.globalCost))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (isLeafNode != other.isLeafNode)
+			return false;
+		if (level != other.level)
+			return false;
+		if (parentNode == null) {
+			if (other.parentNode != null)
+				return false;
+		} else if (!parentNode.equals(other.parentNode))
+			return false;
+		if (pendingApplications == null) {
+			if (other.pendingApplications != null)
+				return false;
+		} else if (!pendingApplications.equals(other.pendingApplications))
+			return false;
+		if (position != other.position)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "TransformationNode [globalCost=" + globalCost + ", position=" + position + ", level=" + level + ", id="
+				+ id + ", parentNode=" + parentNode + ", isLeafNode=" + isLeafNode + ", pendingApplications="
+				+ pendingApplications + ", appliedRuleIRI=" + appliedRuleIRI + ", application=" + application + "]";
+	}
+
 }

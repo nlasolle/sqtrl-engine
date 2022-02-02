@@ -50,7 +50,7 @@ class TransformationProcessTest {
 		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 		
 		
-		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT);
+		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT, true);
 		
 		transformationProcess.sortRules();
 		int i = 0;

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,7 +60,6 @@ public class ResultsExporter {
 			.map(this::convertToCSV)
 			.forEach(pw::println);
 		}
-
 	}
 
 	public String convertToCSV(String[] data) {

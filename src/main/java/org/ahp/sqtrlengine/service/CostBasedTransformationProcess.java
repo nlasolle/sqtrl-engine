@@ -6,6 +6,7 @@ import java.util.List;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationNode;
 import org.ahp.sqtrlengine.model.TransformationRule;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.query.Query;
 
 /**
@@ -15,13 +16,14 @@ import org.apache.jena.query.Query;
  */
 public class CostBasedTransformationProcess extends TransformationProcess {
 
+	private boolean pruning;
 	private double maxCost;
 
-	public CostBasedTransformationProcess(double maxCost, List<TransformationRule> rules, 
-			String query, String sparqlEndpoint) {
+	public CostBasedTransformationProcess(double maxCost, List<TransformationRule> rules,
+			String query, String sparqlEndpoint, boolean pruning) {
 		super(rules, query, sparqlEndpoint);
 		this.maxCost = maxCost;
-
+		this.pruning = pruning;
 		sortRules();
 	}
 
@@ -44,10 +46,10 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 		 */
 		double currentBestCost = maxCost;
 		TransformationNode pendingNode = null, candidateNode=null,  candidateExistingNode = null;
-		
+
 		for(TransformationRule rule: rules) {
 			for(TransformationNode existingNode : nodes) {
-				
+
 				if(!existingNode.getAppliedRuleIRI().contains(rule.getIri()) && 
 						(rule.getCost() + existingNode.getGlobalCost()) <= maxCost &&
 						(rule.getCost() + existingNode.getGlobalCost()) <= currentBestCost) {
@@ -55,6 +57,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 
 					if(existingNode.getPendingApplications().isEmpty()) {
 						Query nodeQuery;
+
 						if(existingNode.getLevel() == 0) {
 							nodeQuery = query; //Level 0 is for the initial node 
 						} else { 
@@ -62,8 +65,6 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 						}
 
 						applications = ruleApplyer.getRuleApplications(nodeQuery, rule, sparqlEndpoint);
-						if((applications == null || applications.isEmpty()) && existingNode.getId().contentEquals("Q1")) {
-						}
 					} else {
 
 						applications = existingNode.getPendingApplications();
@@ -72,8 +73,8 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 					if(applications != null && !applications.isEmpty()) {
 
 						pendingNode = new TransformationNode();
-						//The rule application details are saved for the newly formed node
 
+						//The rule application details are saved for the newly formed node
 						RuleApplication application = applications.remove(0);
 
 						//Find the cost for the given rule IRI
@@ -92,20 +93,31 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 						int idLastPart = existingNode.getAppliedRuleIRI().size() + 1;
 						pendingNode.setId(existingNode.getId() + idLastPart);
 						currentBestCost = pendingNode.getGlobalCost();
-						candidateNode = (TransformationNode) pendingNode.clone();
+
+						//This statement checks if the query has already been generated with a lower cost
+						if(pendingNode != null) {
+							if(pruning && isQueryExisting(pendingNode.getApplication().getGeneratedQuery())) {
+								candidateExistingNode.addAppliedRuleIRI(pendingNode.getApplication().getRuleIri()); 
+								logger.info("Time to prune");
+							} else {
+								candidateNode = (TransformationNode) pendingNode.clone();
+							}
+						} 
+
 						logger.info("Pending node application " + pendingNode.getApplication());
 						logger.info("Pending node cost " + pendingNode.getGlobalCost());
-						
+
 					}
 				}
 			}
 		}
+
 		//We need to save that the given rule has been applied for
 		if(candidateNode != null) {
 			candidateExistingNode.addAppliedRuleIRI(candidateNode.getApplication().getRuleIri());
 			nodes.add(candidateNode);
 		}
-		
+
 		return candidateNode;
 	}
 
@@ -115,5 +127,24 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	public void sortRules() {
 		rules.sort(Comparator.comparing(TransformationRule::getCost));
 		logger.info(rules);
+	}
+
+	/**
+	 * Check if the query has already been generated (with lower cost)
+	 */
+	private boolean isQueryExisting(Query query) {
+
+		for(TransformationNode node : nodes) {
+			if(node.getLevel() == 0) { 
+				if(QueryUtils.equivalent(query, this.query)){
+					return true;
+				} 
+			} else if (QueryUtils.equivalent(query, node.getApplication().getGeneratedQuery())) {
+				return true;
+			} 
+
+		}
+
+		return false;
 	}
 }
