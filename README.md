@@ -17,3 +17,9 @@ Please see the documentation file for more details about the system and its use.
 # Licence
 
 This software is governed by the CeCILL licence. See licence.txt for details about this licence.
+
+# References
+
+Bruneau, O., Gaillard, E., Lasolle, N., Lieber, J., Nauer, E., & Reynaud, J. (2017, June). A SPARQL query transformation rule language—application to retrieval and adaptation in case-based reasoning. In International Conference on Case-Based Reasoning (pp. 76-91). Springer, Cham.
+
+Bruneau, O., Lasolle, N., Lieber, J., Nauer, E., Pavlova, S., & Rollet, L. (2021). Applying and developing semantic web technologies for exploiting a corpus in history of science: The case study of the Henri Poincaré correspondence. Semantic Web, 12(2), 359-378.
