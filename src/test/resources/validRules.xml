@@ -71,6 +71,22 @@
 			<explanation>Make optional the triple ?x ?p ?y</explanation>
 		</rule>-->
 
+		<rule iri="http://sqtrl-rules/generic/7" label="See also link">
+			<context></context>
+			<left>?r1 ?p ?o</left>
+			<right>?r1 rdfs:seeAlso ?r2 . ?r2 p ?o</right>
+			<cost>5.0</cost>
+			<explanation>Translate the constraints for a query resource (?r1) to a related resource (?r2)</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/generic/8" label="See also use">
+			<context></context>
+			<left>?r1 ?p ?o . ?r1 rdfs:seeAlso ?r2</left>
+			<right>?r2 p ?o . ?r1 rdfs:seeAlso ?r2</right>
+			<cost>4.0</cost>
+			<explanation>Translate the constraints for a query resource (?r1) to a related resource (?r2)</explanation>
+		</rule>
+
 		<rule iri="http://sqtrl-rules/ahpo/1" label="Switch sender and recipient">
 			<context></context>
 			<left>?l ahpo:sentBy ?x . ?l ahpo:sentTo ?y</left>
