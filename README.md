@@ -9,8 +9,8 @@ It can be used with any RDF graph and thus allows to perform approximation and r
 
 # Installation and configuration guide
 
-To use this library in your Java projects, you can deploy the jar using Maven.
-Then, you can either include the jar using Maven, or directly through your IDE.
+To use this library in your Java projects, you can deploy the application as a jar file using Maven.
+You can include this jar into your Java project using Maven or directly through your IDE.
 
 Please see the documentation file for more details about the system and its use. 
 
