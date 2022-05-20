@@ -40,7 +40,6 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	 * @return true if a node has been created
 	 */
 	public TransformationNode getNextNode() {
-		logger.info("---- GET NEXT NODE ----");
 		/* At this step, the rule list is supposed to be ordered based on their transformation costs.
 		   The goal is to find the rule applicable with the lower total cost
 		 */

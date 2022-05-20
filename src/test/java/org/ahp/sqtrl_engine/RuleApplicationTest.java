@@ -30,7 +30,7 @@ public class RuleApplicationTest {
 	private static List<TransformationRule> rules;
 	private static List<Prefix> prefixes;
 	private static final String RULE_FILE = "validRules.xml";
-	private static final String SPARQL_ENDPOINT = "http://localhost:3030/HP_0510";
+	private static final String SPARQL_ENDPOINT = "http://localhost:3030/full_ahp_corpus";
 
 	@BeforeAll
 	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
@@ -141,5 +141,5 @@ public class RuleApplicationTest {
 			logger.info(ruleApplications);
 		}
 	}
-
+	
 }

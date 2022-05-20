@@ -30,9 +30,9 @@ public class ResultsExporter {
 				"Rules",
 				"Dataset",
 				"Query",
-				"Average query generation time",
-				"Full tree exploration time",
-				"Generated queries"
+				"Average query generation time (s)",
+				"Full tree exploration time (s)",
+				"Generated queries (s)"
 		};
 		
 		data.add(header);

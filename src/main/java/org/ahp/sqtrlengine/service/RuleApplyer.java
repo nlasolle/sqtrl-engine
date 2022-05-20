@@ -152,7 +152,6 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
-		logger.info("QUERY EXPLANATION BIS \n" + query);
 		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
 
 		//Save the bindings with the values for each variable
@@ -513,7 +512,6 @@ public class RuleApplyer {
 	/**
 	 * Apply the transformation to the Jena Query object
 	 * @param application the application with all information for applying the transformation
-	 * @return a generated query as a Jena object
 	 */
 	public void applyTransformation(RuleApplication application) {
 		Query generatedQuery = application.getInitialQuery().cloneQuery();
@@ -599,7 +597,6 @@ public class RuleApplyer {
 				generatedQuery += "FILTER NOT EXISTS { "
 						+ exception
 						+ " }\n";
-				generatedQuery += exception + "\n";
 			}
 		}
 

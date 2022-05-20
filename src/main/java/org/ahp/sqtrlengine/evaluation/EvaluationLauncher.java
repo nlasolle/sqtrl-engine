@@ -18,11 +18,16 @@ public class EvaluationLauncher {
 		List<CombinationResult> results = new ArrayList<CombinationResult>();
 
 		//Run the evaluation for a combination, and get a result
+		int i = 1;
 		for(ParameterCombination combination : combinations) {
 			CombinationResult result = EvaluationManager.runEvaluation(combination);
+			System.out.println("COMBINATION " + i);
 			if(result != null) {
 				results.add(result);
+				ResultsExporter exporter = new ResultsExporter();
+				exporter.export(results);
 			}
+			i++;
 		}
 		
 		//Export of the full results list in a CSV file
