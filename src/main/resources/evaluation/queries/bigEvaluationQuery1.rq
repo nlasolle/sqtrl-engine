@@ -1,0 +1,16 @@
+#Les lettres envoyées par Henri Poincaré à Gosta Mittag-Leffler et citant Charles Hermitte, Sofia Kovaleski, Karl Weirstrass
+# et rédigées entre 1880 et 1990
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT ?l 
+WHERE {
+    ?l ahpo:sentBy <http://henripoincare.fr/api/items/843> .
+    ?l ahpo:sentTo <http://henripoincare.fr/api/items/452> .
+    ?l ahpo:citeName <http://henripoincare.fr/api/items/333> .
+    ?l ahpo:citeName <http://henripoincare.fr/api/items/584> .
+    ?l ahpo:citeApparatBiblio <http://henripoincare.fr/api/items/724> .
+  	?l ahpo:writingDate ?date .
+     FILTER (xsd:integer(SUBSTR(?date,0,5)) > 1880 && 
+     		 xsd:integer(SUBSTR(?date,0,5)) < 1890)
+}  

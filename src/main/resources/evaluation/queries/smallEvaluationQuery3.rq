@@ -1,0 +1,7 @@
+#Les lettres citant Gosta Mittag-Leffler
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT ?l
+WHERE {
+    ?l ahpo:citeName <http://henripoincare.fr/api/items/452> .
+}

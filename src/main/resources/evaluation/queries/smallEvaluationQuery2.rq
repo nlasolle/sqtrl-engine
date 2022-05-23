@@ -1,0 +1,10 @@
+#Les lettres envoyées par Henri Poincaré avant 1900
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT ?l
+WHERE {
+    ?l ahpo:sentBy <http://henripoincare.fr/api/items/843> .
+    ?l ahpo:writingDate ?date . 
+  	FILTER (xsd:integer(SUBSTR(?date,0,5)) < 1900)
+}  

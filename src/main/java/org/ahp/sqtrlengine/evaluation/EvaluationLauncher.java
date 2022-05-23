@@ -20,12 +20,11 @@ public class EvaluationLauncher {
 		//Run the evaluation for a combination, and get a result
 		int i = 1;
 		for(ParameterCombination combination : combinations) {
+			//if(i>1) break;
 			CombinationResult result = EvaluationManager.runEvaluation(combination);
 			System.out.println("COMBINATION " + i);
 			if(result != null) {
 				results.add(result);
-				ResultsExporter exporter = new ResultsExporter();
-				exporter.export(results);
 			}
 			i++;
 		}

@@ -1,0 +1,7 @@
+#Les lettres rédigées à Paris
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT ?l
+WHERE {
+    ?l ahpo:writtenAt <https://www.geonames.org/2988507>
+}  

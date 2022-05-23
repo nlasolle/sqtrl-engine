@@ -24,7 +24,7 @@ public class ResultsExporter {
 		
 		//Construct the header (both parameter and results are saved in the csv file)
 		String [] header = {
-				"Endpoint",
+				"RDF graph",
 				"Max cost",
 				"Pruning?",
 				"Rules",
@@ -39,7 +39,7 @@ public class ResultsExporter {
 		
 		for(CombinationResult result : results) {
 			String [] dataLine = {
-					result.getParameterCombination().isLocalEndpoint() ? "local" : "distant", 
+					result.getParameterCombination().getGraphName(),
 					Double.toString(result.getParameterCombination().getMaxCost()),
 					result.getParameterCombination().isPruning() ? "Yes" : "No", 
 					Integer.toString(result.getParameterCombination().getRules().size()),
@@ -52,7 +52,7 @@ public class ResultsExporter {
 			
 			 data.add(dataLine);
 		}
-		String fileName = "sqtrl_evaluation_" + new SimpleDateFormat("yyyyMMddHHmmss' .csv'").format(new Date());
+		String fileName = "evaluation_results/sqtrl_evaluation_" + new SimpleDateFormat("yyyyMMddHHmmss' .csv'").format(new Date());
 
 		File csvOutputFile = new File(fileName);
 		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {

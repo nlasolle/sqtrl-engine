@@ -1,0 +1,9 @@
+#Les lettres traitant de mathématiques
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?l
+WHERE {
+    ?l a ahpo:Letter .
+    ?l dcterms:subject "Mathématiques" 
+}

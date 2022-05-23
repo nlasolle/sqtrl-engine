@@ -11,16 +11,16 @@ import org.ahp.sqtrlengine.model.TransformationRule;
  */
 public class ParameterCombination {
 
-	private boolean localEndpoint;
+	private String graphName; //The corpus name
 	private double maxCost; 
-	private boolean pruning;
-	private List<TransformationRule> rules;
-	private String dataset;
-	private String query;
+	private boolean pruning; //Is pruning applying in order to prevent multiple query generation
+	private List<TransformationRule> rules; //The set of rules
+	private String dataset; 
+	private String query; //The initial SPARQL query
 	
-	public ParameterCombination (boolean localEndpoint, double maxCost, boolean pruning,
+	public ParameterCombination (String graphName, double maxCost, boolean pruning,
 			List<TransformationRule> rules, String dataset, String query) {
-		this.localEndpoint = localEndpoint;
+		this.graphName = graphName;
 		this.maxCost = maxCost;
 		this.pruning = pruning;
 		this.rules = rules;
@@ -28,14 +28,14 @@ public class ParameterCombination {
 		this.query = query;
 	}
 
-	public boolean isLocalEndpoint() {
-		return localEndpoint;
+	public String getGraphName() {
+		return graphName;
 	}
 
-	public void setLocalEndpoint(boolean localEndpoint) {
-		this.localEndpoint = localEndpoint;
+	public void setGraphName(String graphName) {
+		this.graphName = graphName;
 	}
-
+	
 	public double getMaxCost() {
 		return maxCost;
 	}
@@ -75,6 +75,6 @@ public class ParameterCombination {
 	public void setQuery(String query) {
 		this.query = query;
 	}
-	
-	
+
+
 }

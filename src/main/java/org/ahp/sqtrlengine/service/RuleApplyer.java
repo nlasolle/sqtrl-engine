@@ -126,14 +126,11 @@ public class RuleApplyer {
 
 		Pattern pattern = Pattern.compile("(http|https):/[^\\)\\>\\s]*");
 		Matcher matcher = pattern.matcher(explanation);
-		System.out.println("THE GREATH MATCHER");
-		System.out.println(explanation);
 	
 		HashMap<String, String> varsAssociations = new HashMap<>();
 
 		int i = 0;
 		while (matcher.find()) {
-			System.out.println(matcher.group());
 			varsAssociations.put("?rdfs" + i, matcher.group());
 			varsAssociations.put("?dc" + i, matcher.group());
 

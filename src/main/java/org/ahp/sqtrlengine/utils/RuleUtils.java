@@ -17,9 +17,8 @@ public class RuleUtils {
 
 				List<String> exceptions = new ArrayList<String>();
 
-				System.out.println("rule " + rule.getLabel());
+				
 				for(String exception : rule.getExceptions()) {
-					System.out.println("exception " + exception);
 					exceptions.add(replaceAllPrefixes(exception, prefix));
 				}
 
@@ -53,7 +52,6 @@ public class RuleUtils {
 					+ field.substring(nextSpaceIndex);
 		}
 		
-		System.out.println("FIELD " + field);
 		return field;
 	}
 }

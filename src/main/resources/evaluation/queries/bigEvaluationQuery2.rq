@@ -9,4 +9,3 @@ WHERE {
     ?l ahpo:writingDate ?d .
     ?l ahpo:citeName <http://henripoincare.fr/api/items/333>
 }  
-LIMIT 50 

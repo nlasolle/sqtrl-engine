@@ -1,7 +1,7 @@
 .settings/*
 target/*
+logs/*
 .classpath
 .project
 .log
 .csv
-logs/*
