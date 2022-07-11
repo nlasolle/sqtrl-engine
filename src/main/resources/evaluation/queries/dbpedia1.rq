@@ -1,14 +1,12 @@
-PREFIX dbo: <http://dbpedia.org/ontology/> 
-PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?country ?city ?city_name
 WHERE {
-    ?city rdf:type dbo:City ;
-          foaf:name ?city_name ;
-          dbo:country ?country .
-
-    ?country foaf:name "Canada"@en .
-
-    FILTER(langMatches(lang(?city_name), "en"))
+  ?city rdf:type dbo:City ;
+        foaf:name ?city_name ;
+        dbo:country ?country .
+  ?country foaf:name "Canada"@en .
+  FILTER (langMatches(lang(?city_name), "en"))
 }

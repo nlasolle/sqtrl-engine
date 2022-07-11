@@ -1,0 +1,15 @@
+PREFIX magp: <https://makg.org/property/>
+PREFIX dcterms: <http://purl.org/dc/terms/> 
+PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+
+SELECT ?authorName (COUNT(?confInstance) AS ?freq) 
+WHERE {
+ ?paper dcterms:creator ?author .
+ ?author foaf:name ?authorName .
+ ?paper magp:appearsInConferenceInstance ?confInstance .
+ ?confInstance dbo:location dbr:Honolulu . 
+}
+GROUP BY ?authorName 
+ORDER BY DESC(?freq)

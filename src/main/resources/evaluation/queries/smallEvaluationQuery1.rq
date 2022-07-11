@@ -1,8 +1,8 @@
 #Les lettres envoyées par Henri Poincaré
 PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
 
-SELECT ?l ?dest
+SELECT ?l ?recipient
 WHERE {
     ?l ahpo:sentBy <http://henripoincare.fr/api/items/843> .
-    ?l ahpo:sentTo ?dest . 
+    ?l ahpo:sentTo ?recipient . 
 }  

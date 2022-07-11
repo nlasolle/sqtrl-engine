@@ -1,7 +1,6 @@
 PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
 
-SELECT ?l1
+SELECT ?o
 WHERE {
-	?l1 ahpo:sentBy <http://henripoincare.fr/api/items/843> .
-	?l1 ahpo:sentTo <http://henripoincare.fr/api/items/452>
+	<http://henripoincare.fr/api/items/10096> ahpo:sentBy ?o
 }

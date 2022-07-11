@@ -1,14 +1,15 @@
-PREFIX dbo: <http://dbpedia.org/ontology/> 
-PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+#People who were born in Berlin before 1900
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX : <http://dbpedia.org/resource/>
 
-SELECT ?country ?city ?city_name
+SELECT ?name ?birth ?death ?person
 WHERE {
-    ?city rdf:type dbo:City ;
-          foaf:name ?city_name ;
-          dbo:country ?country .
-
-    ?country foaf:name "Canada"@en .
-
-    FILTER(langMatches(lang(?city_name), "en"))
+  ?person dbo:birthPlace :Berlin .
+  ?person dbo:birthDate ?birth .
+  ?person foaf:name ?name .
+  ?person dbo:deathDate ?death .
+  FILTER (?birth < "1900-01-01"^^xsd:date)
 }
+ORDER BY ?name

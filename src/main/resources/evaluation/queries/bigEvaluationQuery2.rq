@@ -1,11 +1,13 @@
-PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+#Les lettres envoyées par un membre de l'académie des sciences
+# qui traitent de l'affaire dreyfus et qui citent Gaston Darboux
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+PREFIX ahpot: <http://henripoincare.fr/ahpot>
 
-SELECT ?l ?dest ?d
+SELECT DISTINCT ?l
 WHERE {
-    ?l ahpo:sentBy <http://henripoincare.fr/api/items/843> .
-    ?l ahpo:sentTo ?dest . 
-    ?dest dcterms:title ?name .
-    ?l ahpo:writingDate ?d .
-    ?l ahpo:citeName <http://henripoincare.fr/api/items/333>
+    ?l ahpo:sentBy ?sender .
+    ?l ahpo:citeName <http://henripoincare.fr/api/items/810> .
+    ?sender ahpot:isMemberOf "Académie des sciences" .
+    ?l dcterms:subject "Affaire Dreyfus" 
 }  

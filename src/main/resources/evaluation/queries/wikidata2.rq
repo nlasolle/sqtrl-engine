@@ -1,0 +1,11 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+#Danish idioms
+
+SELECT ?l ?lemma WHERE {
+  ?l dct:language wd:Q9035;
+    wikibase:lemma ?lemma;
+    wikibase:lexicalCategory wd:Q184511.
+}

@@ -2,9 +2,8 @@
 
 	<prefixes>
 		<prefix label ="rdf:" iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></prefix>
-		<prefix label="rdfs:" iri="http://www.w3.org/2000/01/rdf-schema#"></prefix>
-		<prefix label="ahpo:" iri="http://e-hp.ahp-numerique.fr/ahpo#"></prefix>
-		<prefix label="dcterms:" iri="http://purl.org/dc/terms/"></prefix>
+		<prefix label ="rdfs:" iri="http://www.w3.org/2000/01/rdf-schema#"></prefix>
+		<prefix label ="dcterms:" iri="http://purl.org/dc/terms/"></prefix>
 	</prefixes>
 
 	<rules>
@@ -14,7 +13,7 @@
 			<left>?x ?p ?C</left>
 			<right>?x ?p ?D</right>
 			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X &#38;&#38; ?X != ?D)</exception>
-			<exception>FILTER(?C = ?D)</exception>
+			<!--  <exception>FILTER(?C = ?D)</exception>-->
 			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
@@ -24,11 +23,11 @@
 			<left>?C ?p ?x</left>
 			<right>?D ?p ?x</right>
 			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
-			<exception>FILTER(?C = ?D)</exception>
+			<!--<exception>FILTER(?C = ?D)</exception>-->
 			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
-
+<!--
 		<rule iri="http://sqtrl-rules/generic/3" label="Generalize object instance">
 		   <context>?o a ?C</context>
 		   <left>?s ?p ?o</left>
@@ -44,7 +43,7 @@
 		   <cost>5.0</cost>
 		   <explanation>Generalize ?s in any instance of ?C</explanation>
 		</rule>
-
+-->
 		<rule iri="http://sqtrl-rules/generic/5" label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>

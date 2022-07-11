@@ -1,9 +1,8 @@
-#Les lettres traitant de mathématiques
-PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
+#Lettres rédigées à Paris envoyées à Poincaré
 
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
 SELECT ?l
 WHERE {
-    ?l a ahpo:Letter .
-    ?l dcterms:subject "Mathématiques" 
+	?l ahpo:sentTo <http://henripoincare.fr/api/items/843> .
+	?l ahpo:writtenAt <https://www.geonames.org/2988507>
 }

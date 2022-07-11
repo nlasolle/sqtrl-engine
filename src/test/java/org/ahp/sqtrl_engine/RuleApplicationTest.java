@@ -1,5 +1,9 @@
 package org.ahp.sqtrl_engine;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -140,6 +144,37 @@ public class RuleApplicationTest {
 			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
 			logger.info(ruleApplications);
 		}
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+		"http://sqtrl-rules/generic/1, queries/ahpo3.rq",
+		"http://sqtrl-rules/generic/5, queries/ahpo1.rq",
+		"http://sqtrl-rules/generic/3, queries/ahpo1.rq",
+		"http://sqtrl-rules/generic/4, queries/ahpo6.rq",
+	})
+	void testExplicationGeneration(String ruleIri, String queryFile) throws IOException {
+		TransformationRule rule = rules.stream()
+				.filter(r -> r.getIri().equals(ruleIri))
+				.findAny()
+				.orElse(null);
+
+		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
+		Query query = QueryUtils.parseQuery(queryAsString);
+
+		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
+		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
+
+		
+		assertNotNull(ruleApplications);
+		assertNotEquals(ruleApplications.size(), 0);
+		
+		for(RuleApplication application : ruleApplications) {
+			logger.warn("Explication: " + application.getExplanation());
+			assertFalse(application.getExplanation().isBlank());
+		
+		}
+
 	}
 	
 }

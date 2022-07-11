@@ -14,7 +14,7 @@
 			<left>?x ?p ?C</left>
 			<right>?x ?p ?D</right>
 			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X &#38;&#38; ?X != ?D)</exception>
-			<exception>FILTER(?C = ?D)</exception>
+			<!--  <exception>FILTER(?C = ?D)</exception>-->
 			<cost>5.0</cost>
 			<explanation>Generalizing ?C in ?D</explanation>
 		</rule>
@@ -51,7 +51,7 @@
 			<right>?x ?q ?y</right>
 			<exception>?p rdfs:subPropertyOf ?r . ?r rdfs:subPropertyOf ?q FILTER(?p != ?r &#38;&#38; ?q != ?r)</exception>
 			<exception>FILTER(?p = ?q)</exception>
-			<cost>2.0</cost>
+			<cost>3.0</cost>
 			<explanation>Generalize ?p in ?q</explanation>
 		</rule>
 

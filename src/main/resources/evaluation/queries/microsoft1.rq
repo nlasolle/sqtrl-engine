@@ -1,0 +1,17 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX magc: <https://makg.org/class/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX fabio: <http://purl.org/spar/fabio/>
+PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?paperTitle
+WHERE {
+	?paper rdf:type magc:Paper .
+	?paper prism:keyword "hydrogen"^^xsd:string .
+	?paper prism:keyword "oxygen"^^xsd:string .
+	?paper fabio:hasDiscipline ?field .
+	?paper dcterms:title ?paperTitle .
+	?paper prism:publicationDate ?paperPubDate .
+}
