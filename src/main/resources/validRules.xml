@@ -1,174 +1,232 @@
 <SQTRule>
 
 	<prefixes>
-		<prefix label ="rdf:" iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></prefix>
-		<prefix label="rdfs:" iri="http://www.w3.org/2000/01/rdf-schema#"></prefix>
+		<prefix label="rdf:"
+			iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></prefix>
+		<prefix label="rdfs:"
+			iri="http://www.w3.org/2000/01/rdf-schema#"></prefix>
+		<prefix label="owl:" iri="http://www.w3.org/2002/07/owl#"></prefix>
 		<prefix label="ahpo:" iri="http://e-hp.ahp-numerique.fr/ahpo#"></prefix>
+		<prefix label="ahpot:" iri="http://henripoincare.fr/ahpot"></prefix>
 		<prefix label="dcterms:" iri="http://purl.org/dc/terms/"></prefix>
 	</prefixes>
 
 	<rules>
 
-		<rule iri="http://sqtrl-rules/generic/1" label="Generalize object class">
+		<rule iri="http://sqtrl-rules/generic/1"
+			label="Generalize object class">
 			<context>?C rdfs:subClassOf ?D</context>
 			<left>?x ?p ?C</left>
 			<right>?x ?p ?D</right>
-			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X &#38;&#38; ?X != ?D)</exception>
-			<!--  <exception>FILTER(?C = ?D)</exception>-->
+			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C !=
+				?X &#38;&#38; ?X != ?D)</exception>
+			<exception>FILTER(?C = ?D)</exception>
 			<cost>5.0</cost>
-			<explanation>Generalizing ?C in ?D</explanation>
+			<explanation>Generalize ?C into ?D</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/2" label="Generalize subject class">
+		<rule iri="http://sqtrl-rules/generic/2"
+			label="Generalize subject class">
 			<context>?C rdfs:subClassOf ?D</context>
 			<left>?C ?p ?x</left>
 			<right>?D ?p ?x</right>
-			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D</exception>
+			<exception>?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C !=
+				?X &#38;&#38; ?X != ?D)</exception>
 			<exception>FILTER(?C = ?D)</exception>
 			<cost>5.0</cost>
-			<explanation>Generalizing ?C in ?D</explanation>
+			<explanation>Generalize ?C into ?D</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/3" label="Generalize object instance">
-		   <context>?o a ?C</context>
-		   <left>?s ?p ?o</left>
-		   <right>?s ?p ?x . ?x a ?o</right>
-		   <cost>5.0</cost>
-		   <explanation>Generalize ?o in any instance of ?C</explanation>
+		<rule iri="http://sqtrl-rules/generic/3"
+			label="Generalize object instance">
+			<context>?o a ?C</context>
+			<left>?s ?p ?o</left>
+			<right>?s ?p ?x . ?x a ?C</right>
+			<exception>FILTER( ?C = owl:Class )</exception>
+			<cost>7.0</cost>
+			<explanation>Generalize ?o into any instance of ?C</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/4" label="Generalize subject instance">
-		   <context>?s a ?C</context>
-		   <left>?s ?p ?o</left>
-		   <right>?x ?p ?o . ?x a ?C</right>
-		   <cost>5.0</cost>
-		   <explanation>Generalize ?s in any instance of ?C</explanation>
+		<rule iri="http://sqtrl-rules/generic/4"
+			label="Generalize subject instance">
+			<context>?s a ?C</context>
+			<left>?s ?p ?o</left>
+			<right>?x ?p ?o . ?x a ?C</right>
+			<exception>FILTER( ?C = owl:Class )</exception>
+			<cost>7.0</cost>
+			<explanation>Generalize ?s into any instance of ?C</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/5" label="Generalize predicate">
+		<rule iri="http://sqtrl-rules/generic/5"
+			label="Generalize predicate">
 			<context>?p rdfs:subPropertyOf ?q</context>
 			<left>?x ?p ?y</left>
 			<right>?x ?q ?y</right>
-			<exception>?p rdfs:subPropertyOf ?r . ?r rdfs:subPropertyOf ?q FILTER(?p != ?r &#38;&#38; ?q != ?r)</exception>
+			<exception>?p rdfs:subPropertyOf ?r . ?r rdfs:subPropertyOf ?q
+				FILTER(?p != ?r &#38;&#38; ?q != ?r)</exception>
 			<exception>FILTER(?p = ?q)</exception>
-			<cost>3.0</cost>
-			<explanation>Generalize ?p in ?q</explanation>
+			<cost>5.0</cost>
+			<explanation>Generalize ?p into ?q</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/generic/6" label="Suppress triple">
+		<rule iri="http://sqtrl-rules/generic/6"
+			label="Remove triple pattern">
 			<context></context>
 			<left>?x ?p ?y</left>
 			<right></right>
-			<cost>8.0</cost>
-			<explanation>Suppress the triple ?x ?p ?y</explanation>
+			<cost>10.0</cost>
+			<explanation>Remove the triple pattern ?x ?p ?y</explanation>
 		</rule>
-				
-		<!--<rule iri="http://sqtrl-rules/generic/5" label="Make triple optional">
+
+		<rule iri="http://sqtrl-rules/generic/7"
+			label="Make triple pattern optional">
 			<context></context>
 			<left>?x ?p ?y</left>
 			<right>OPTIONAL{?x ?p ?y}</right>
 			<cost>8.0</cost>
-			<explanation>Make optional the triple ?x ?p ?y</explanation>
-		</rule>-->
+			<explanation>Make optional the triple pattern ?x ?p ?y</explanation>
+		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/1" label="Switch sender and recipient">
+		<rule iri="http://sqtrl-rules/ahpo/1"
+			label="Switch sender and recipient">
 			<context></context>
 			<left>?l ahpo:sentBy ?x . ?l ahpo:sentTo ?y</left>
 			<right>?l ahpo:sentBy ?y . ?l ahpo:sentTo ?x</right>
 			<cost>2.0</cost>
-			<explanation>Exchange the sender (?x) and the recipient (?y) of the letter</explanation>
+			<explanation>Exchange the sender (?x) and the recipient (?y) of the
+				letter</explanation>
 		</rule>
 
 
-		<rule iri="http://sqtrl-rules/ahpo/2" label="Replace sender by quoted person">
+		<rule iri="http://sqtrl-rules/ahpo/2"
+			label="Replace sender by quoted person">
 			<context></context>
 			<left>?l ahpo:sentBy ?x . ?l ahpo:citeName ?y</left>
 			<right>?l ahpo:sentBy ?y</right>
-			<cost>3.1</cost>
-			<explanation>Replace the sender (?x) by one of the quoted persons (?y)</explanation>
+			<cost>3.0</cost>
+			<explanation>Replace the sender (?x) by one of the quoted persons
+				(?y)</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/3" label="Replace recipient by quoted person">
+		<rule iri="http://sqtrl-rules/ahpo/3"
+			label="Replace recipient by quoted person">
 			<context></context>
 			<left>?l ahpo:sentTo ?x . ?l ahpo:citeName ?y</left>
 			<right>?l ahpo:sentTo ?y</right>
-			<cost>3.2</cost>
-			<explanation>Replace the recipient (?x) by one of the quoted persons (?y)</explanation>
+			<cost>3.0</cost>
+			<explanation>Replace the recipient (?x) by one of the quoted persons
+				(?y)</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/4" label="Replace subject with another related subject">
+		<rule iri="http://sqtrl-rules/ahpo/4"
+			label="Replace subject with another related subject">
 			<context>?l2 dcterms:subject ?x . ?l2 dcterms:subject ?y</context>
 			<left>?l1 dcterms:subject ?x</left>
 			<right>?l1 dcterms:subject ?y</right>
 			<exception>FILTER(?x != ?y)</exception>
-			<cost>3.3</cost>
-			<explanation>Replacing a subject (?x) by another related subject (?y)</explanation>
+			<cost>4.0</cost>
+			<explanation>Replace a subject (?x) by another related subject (?y)
+			</explanation>
 		</rule>
 
 
-		<rule iri="http://sqtrl-rules/ahpo/5" label="Replace correspondent with subject related sender">
-			<context>?l1 dcterms:subject ?s . ?l2 ahpo:correspondent ?y . ?l2 dcterms:subject ?s</context>
+		<rule iri="http://sqtrl-rules/ahpo/5"
+			label="Replace correspondent with subject related sender">
+			<context>?l1 dcterms:subject ?s . ?l2 ahpo:correspondent ?y . ?l2
+				dcterms:subject ?s</context>
 			<left>?l1 ahpo:correspondent ?x</left>
 			<right>?l1 ahpo:correspondent ?y</right>
-			<cost>3.4</cost>
-			<explanation>Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)</explanation>
+			<cost>4.5</cost>
+			<explanation>Replacing the correspondent (?x) by another
+				correspondent (?y) related to a mentioned subject (?s)</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/6" label="Transform correspondent as a quoted person">
+		<rule iri="http://sqtrl-rules/ahpo/6"
+			label="Transform correspondent as a quoted person">
 			<context></context>
 			<left>?l ahpo:correspondent ?x</left>
 			<right>?l ahpo:citeName ?x</right>
-			<cost>3.5</cost>
-			<explanation>Remove a correspondent (?x) and set it as one of the quoted persons</explanation>
+			<cost>3.0</cost>
+			<explanation>Remove a correspondent (?x) and set it as one of the
+				quoted persons</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/7" label="Replace individual label property">
+		<rule iri="http://sqtrl-rules/ahpo/7"
+			label="Replace individual label property">
 			<context></context>
 			<left>?x rdfs:label ?y</left>
-			<right>? dcterms:title ?y</right>
+			<right>?x dcterms:title ?y</right>
 			<exception>?x a rdf:Property</exception>
 			<exception>?x a rdfs:Literal</exception>
 			<cost>0.0</cost>
-			<explanation>Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label)
-				for an individual</explanation>
+			<explanation>Replace the label property used (dcterms:title) with the
+				more appropriated one (rdfs:label)
+				for an individual
+			</explanation>
 		</rule>
 
-		<rule iri="http://sqtrl-rules/ahpo/8" label="Replace property label property">
+		<rule iri="http://sqtrl-rules/ahpo/8"
+			label="Replace property label property">
 			<context>?x a rdf:Property</context>
 			<left>?p dcterms:title ?y</left>
 			<right>?p rdfs:label ?y</right>
 			<cost>0.0</cost>
-			<explanation>Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label)
-				for a property</explanation>
+			<explanation>Replace the label property used (dcterms:title) with the
+				more appropriated one (rdfs:label)
+				for a property
+			</explanation>
 		</rule>
 
-		<!--<filteringRule iri="http://sqtrl-rules/ahpo/9" label="Writing date minor extension">
-			<left>?l ahpo:writingDate ?d</left>
-			<leftFilter>FILTER(YEAR(?d) &gt;= a &#38;&#38; YEAR(?d) &lt;= b)</leftFilter>
-			<rightFilter>FILTER(YEAR(?d) &gt;= a - 2 &#38;&#38; YEAR(?d) &lt;= b + 2)</rightFilter>
-			<explanation>Extend the bounds related to the writing date of the letter (?l): 2 years for each bound</explanation>
-		</rule>-->
-
-		<!-- <rule iri="http://sqtrl-rules/ahpo/7" label="Replace the place of archive">
-			<context>?l1 ahpo:archivedAt ?x . ?l1 ahpo:hasAddress ?a1 . ?a1
-				ahpo:town ?t1 .
-				?l2 ahpo:archivedAt ?y . ?l2 ahpo:hasAddress ?a2 . ?a2 ahpo:town ?t1
-			</context>
-			<left>?l1 ahpo:archivedAt ?x</left>
-			<right>?l1 ahpo:archivedAt ?y</right>
+		<rule iri="http://sqtrl-rules/ahpo/9"
+			label="Generalize to institution membership">
+			<context>?x ahpot:isMemberOf ?institution</context>
+			<left>?s ?p ?x</left>
+			<right>?s ?p ?y . ?y ahpot:isMemberOf ?institution</right>
 			<cost>3.0</cost>
-			<explanation>Replace the place of archive by another place of archives located in the same city
-			</explanation>
-		</rule> -->
+			<explanation>Generalize the person (?x) into any other member of the
+				institution (?institution)</explanation>
+		</rule>
 
-		<!--  <rule iri="http://sqtrl-rules/ahpo/8" label="Replace subject with place related subject">
-			<context>?l1 ahpo:archivedAt ?x . ?l1 dcterms:subject ?s1 . ?l2 ahpo:archivedAt ?x . ?l2 dcterms:subject ?s2</context>
-			<left>?l1 dcterms:subject ?s1</left>
-			<right>?l1 dcterms:subject ?s2</right>
-			<cost>2.0</cost>
-			<exception>FILTER(?l1 != ?l2)</exception>
-			<exception>FILTER(?s1 != ?s2)</exception>
-			<explanation>Replace the subject by another subject of letters archived within the same place</explanation>
-		</rule>-->
+		<rule iri="http://sqtrl-rules/ahpo/10"
+			label="Generalize to scientific field association">
+			<context>?x ahpot:scientificField ?field</context>
+			<left>?s ?p ?x</left>
+			<right>?s ?p ?y . ?y ahpot:scientificField ?field</right>
+			<cost>4.0</cost>
+			<explanation>Generalize the person (?x) into any other person related
+				to the scientific field of (?field)</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/ahpo/11"
+			label="Generalize to status association">
+			<context>?x ahpot:socialAndProfessionalStatus ?status</context>
+			<left>?s ?p ?x</left>
+			<right>?s ?p ?y . ?y ahpot:socialAndProfessionalStatus ?status
+			</right>
+			<cost>5.0</cost>
+			<explanation>Generalize the person (?x) by any other person with a
+				similar social and professional status (?status)</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/ahpo/12"
+			label="Generalize to people in the same workplace">
+			<context>?x ahpot:workPlace ?place</context>
+			<left>?s ?p ?x</left>
+			<right>?s ?p ?y . ?y ahpot:workPlace ?place</right>
+			<cost>5.0</cost>
+			<explanation>Generalize the person (?x) by any other person with a
+				similar workplace (?place)</explanation>
+		</rule>
+
+		<rule iri="http://sqtrl-rules/ahpo/13"
+			label="Generalize to people with the same citizenship">
+			<context>?x ahpot:citizenship ?citizenship</context>
+			<left>?s ?p ?x</left>
+			<right>?s ?p ?y . ?y ahpot:citizenship ?citizenship</right>
+			<cost>5.0</cost>
+			<explanation>Generalize the person (?x) by any other person with the
+				same citizenship (?citizenship)</explanation>
+		</rule>
+
 	</rules>
 </SQTRule>
