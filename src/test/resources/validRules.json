@@ -1,7 +1,6 @@
 {
    "SQTRule":{
-      "prefixes":{
-         "prefix":[
+         "prefixes":[
             {
                "label":"rdf",
                "iri":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -26,10 +25,8 @@
                "label":"dcterms",
                "iri":"http://purl.org/dc/terms/"
             }
-         ]
-      },
-      "rules":{
-         "rule":[
+         ],
+      "rules":[
             {
                "iri":"http://sqtrl-rules/generic/1",
                "label":"Generalize object class",
@@ -62,7 +59,7 @@
                "context":"?o a ?C",
                "left":"?s ?p ?o",
                "right":"?s ?p ?x . ?x a ?C",
-               "exceptions":"FILTER( ?C = owl:Class )",
+               "exceptions":["FILTER( ?C = owl:Class )"],
                "cost":"7.0",
                "explanation":"Generalize ?o into any instance of ?C"
             },
@@ -72,7 +69,7 @@
                "context":"?s a ?C",
                "left":"?s ?p ?o",
                "right":"?x ?p ?o . ?x a ?C",
-               "exceptions":"FILTER( ?C = owl:Class )",
+               "exceptions":["FILTER( ?C = owl:Class )"],
                "cost":"7.0",
                "explanation":"Generalize ?s into any instance of ?C"
             },
@@ -92,22 +89,16 @@
             {
                "iri":"http://sqtrl-rules/generic/6",
                "label":"Remove triple pattern",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?x ?p ?y",
-               "right":{
-                  
-               },
+               "right":"",
                "cost":"10.0",
                "explanation":"Remove the triple pattern ?x ?p ?y"
             },
             {
                "iri":"http://sqtrl-rules/generic/7",
                "label":"Make triple pattern optional",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?x ?p ?y",
                "right":"OPTIONAL{?x ?p ?y}",
                "cost":"8.0",
@@ -116,9 +107,7 @@
             {
                "iri":"http://sqtrl-rules/ahpo/1",
                "label":"Switch sender and recipient",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?l ahpo:sentBy ?x . ?l ahpo:sentTo ?y",
                "right":"?l ahpo:sentBy ?y . ?l ahpo:sentTo ?x",
                "cost":"2.0",
@@ -127,9 +116,7 @@
             {
                "iri":"http://sqtrl-rules/ahpo/2",
                "label":"Replace sender by quoted person",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?l ahpo:sentBy ?x . ?l ahpo:citeName ?y",
                "right":"?l ahpo:sentBy ?y",
                "cost":"3.0",
@@ -138,9 +125,7 @@
             {
                "iri":"http://sqtrl-rules/ahpo/3",
                "label":"Replace recipient by quoted person",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?l ahpo:sentTo ?x . ?l ahpo:citeName ?y",
                "right":"?l ahpo:sentTo ?y",
                "cost":"3.0",
@@ -152,7 +137,7 @@
                "context":"?l2 dcterms:subject ?x . ?l2 dcterms:subject ?y",
                "left":"?l1 dcterms:subject ?x",
                "right":"?l1 dcterms:subject ?y",
-               "exceptions":"FILTER(?x != ?y)",
+               "exceptions":["FILTER(?x != ?y)"],
                "cost":"4.0",
                "explanation":"Replace a subject (?x) by another related subject (?y)\n   "
             },
@@ -168,9 +153,7 @@
             {
                "iri":"http://sqtrl-rules/ahpo/6",
                "label":"Transform correspondent as a quoted person",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?l ahpo:correspondent ?x",
                "right":"?l ahpo:citeName ?x",
                "cost":"3.0",
@@ -179,9 +162,7 @@
             {
                "iri":"http://sqtrl-rules/ahpo/7",
                "label":"Replace individual label property",
-               "context":{
-                  
-               },
+               "context":"",
                "left":"?x rdfs:label ?y",
                "right":"?x dcterms:title ?y",
                "exceptions":[
@@ -246,6 +227,6 @@
                "explanation":"Generalize the person (?x) by any other person with the same citizenship (?citizenship)"
             }
          ]
-      }
+
    }
 }

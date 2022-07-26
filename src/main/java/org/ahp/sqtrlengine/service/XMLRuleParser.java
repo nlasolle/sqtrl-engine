@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -23,6 +24,8 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 /**
  * Class dedicated to the validation and the parsing
@@ -32,8 +35,8 @@ import org.xml.sax.SAXException;
  */
 public class XMLRuleParser implements RuleParser {
 
-	private final static String SCHEMA_FILE = "src/main/resources/transformationRule.xsd";
-	private final static Logger logger = LogManager.getLogger(XMLRuleParser.class);
+	private static final String SCHEMA_FILE = "src/main/resources/transformationRule.xsd";
+	private static final Logger logger = LogManager.getLogger(XMLRuleParser.class);
 
 	private File ruleFile;
 	private Document document;
@@ -54,9 +57,18 @@ public class XMLRuleParser implements RuleParser {
 			throw new InvalidFileTypeException(ruleFile.getPath(), "xml");
 		}
 
-		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		
+		// to be compliant, completely disable DOCTYPE declaration:
+		try {
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		} catch (SAXNotRecognizedException e1) {
+			e1.printStackTrace();
+		} catch (SAXNotSupportedException e1) {
+			e1.printStackTrace();
+		}
+		
 		Schema schema;
-
 
 		try {
 			schema = factory.newSchema(new File(SCHEMA_FILE));
@@ -64,6 +76,7 @@ public class XMLRuleParser implements RuleParser {
 			validator.validate(new StreamSource(ruleFile));
 		} catch (SAXException | IOException e) {
 			logger.error(e.getMessage());
+			logger.error("Test valida otn");
 			return false;
 		}
 		return true;
@@ -86,7 +99,7 @@ public class XMLRuleParser implements RuleParser {
 	@Override
 	public List<TransformationRule> parseRuleFile() throws InvalidRuleFileException {
 
-		List<TransformationRule> rules = new ArrayList<TransformationRule>(); 
+		List<TransformationRule> rules = new ArrayList<>(); 
 
 		TransformationRule rule;//To store each new rule
 
@@ -112,7 +125,7 @@ public class XMLRuleParser implements RuleParser {
 
 
 				if(ruleElement.getChildren("exception") != null){
-					List<String> exceptions = new ArrayList<String>();
+					List<String> exceptions = new ArrayList<>();
 
 					for(Element element : ruleElement.getChildren("exception")) {
 						exceptions.add(element.getText());
@@ -158,7 +171,7 @@ public class XMLRuleParser implements RuleParser {
 		formattedRule.setRight(rule.getRight().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
 		formattedRule.setExplanation(rule.getExplanation().trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
 
-		List<String> exceptions = new ArrayList<String>();
+		List<String> exceptions = new ArrayList<>();
 
 		for(String exception : rule.getExceptions()) {
 			exceptions.add(exception.trim().replaceAll("\\R+", " ").replaceAll("(\\s)+", " "));
@@ -170,7 +183,7 @@ public class XMLRuleParser implements RuleParser {
 
 	@Override
 	public List<Prefix> parsePrefixes() {
-		List<Prefix> prefixes = new ArrayList<Prefix>();
+		List<Prefix> prefixes = new ArrayList<>();
 		Prefix prefix;
 
 		//Get all the elements
@@ -181,7 +194,7 @@ public class XMLRuleParser implements RuleParser {
 		//Get all the prefixes
 		for(int i=0;i<docPrefixes.size();i++){
 			prefix = new Prefix();
-			prefix.setPrefix(docPrefixes.get(i).getAttributeValue("label"));
+			prefix.setAbbreviation(docPrefixes.get(i).getAttributeValue("label"));
 			prefix.setNamespace(docPrefixes.get(i).getAttributeValue("iri"));
 			prefixes.add(prefix);
 		}

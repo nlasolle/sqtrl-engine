@@ -94,8 +94,8 @@ public class TransformationNode implements Cloneable{
 		this.appliedRuleIRI = appliedRuleIRI;
 	}
 
-	public void addAppliedRuleIRI(String IRI) {
-		appliedRuleIRI.add(IRI);
+	public void addAppliedRuleIRI(String iri) {
+		appliedRuleIRI.add(iri);
 	}
 
 	public String getId() {

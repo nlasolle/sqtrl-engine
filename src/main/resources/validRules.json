@@ -1,0 +1,248 @@
+{
+   "SQTRule":{
+         "prefixes":[
+            {
+               "label":"rdf",
+               "iri":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            },
+            {
+               "label":"rdfs",
+               "iri":"http://www.w3.org/2000/01/rdf-schema#"
+            },
+            {
+               "label":"owl",
+               "iri":"http://www.w3.org/2002/07/owl#"
+            },
+            {
+               "label":"ahpo",
+               "iri":"http://e-hp.ahp-numerique.fr/ahpo#"
+            },
+            {
+               "label":"ahpot",
+               "iri":"http://henripoincare.fr/ahpot"
+            },
+            {
+               "label":"dcterms",
+               "iri":"http://purl.org/dc/terms/"
+            }
+         ],
+      "rules":[
+            {
+               "iri":"http://sqtrl-rules/generic/1",
+               "label":"Generalize object class",
+               "context":"?C rdfs:subClassOf ?D",
+               "left":"?x ?p ?C",
+               "right":"?x ?p ?D",
+               "exceptions":[
+                  "?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X && ?X != ?D)",
+                  "FILTER(?C = ?D)"
+               ],
+               "cost":"5.0",
+               "explanation":"Generalize ?C into ?D"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/2",
+               "label":"Generalize subject class",
+               "context":"?C rdfs:subClassOf ?D",
+               "left":"?C ?p ?x",
+               "right":"?D ?p ?x",
+               "exceptions":[
+                  "?C rdfs:subClassOf ?X . ?X rdfs:subClassOf ?D FILTER(?C != ?X && ?X != ?D)",
+                  "FILTER(?C = ?D)"
+               ],
+               "cost":"5.0",
+               "explanation":"Generalize ?C into ?D"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/3",
+               "label":"Generalize object instance",
+               "context":"?o a ?C",
+               "left":"?s ?p ?o",
+               "right":"?s ?p ?x . ?x a ?C",
+               "exceptions":["FILTER( ?C = owl:Class )"],
+               "cost":"7.0",
+               "explanation":"Generalize ?o into any instance of ?C"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/4",
+               "label":"Generalize subject instance",
+               "context":"?s a ?C",
+               "left":"?s ?p ?o",
+               "right":"?x ?p ?o . ?x a ?C",
+               "exceptions":["FILTER( ?C = owl:Class )"],
+               "cost":"7.0",
+               "explanation":"Generalize ?s into any instance of ?C"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/5",
+               "label":"Generalize predicate",
+               "context":"?p rdfs:subPropertyOf ?q",
+               "left":"?x ?p ?y",
+               "right":"?x ?q ?y",
+               "exceptions":[
+                  "?p rdfs:subPropertyOf ?r . ?r rdfs:subPropertyOf ?q FILTER(?p != ?r && ?q != ?r)",
+                  "FILTER(?p = ?q)"
+               ],
+               "cost":"5.0",
+               "explanation":"Generalize ?p into ?q"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/6",
+               "label":"Remove triple pattern",
+               "context":{
+                  
+               },
+               "left":"?x ?p ?y",
+               "right":{
+                  
+               },
+               "cost":"10.0",
+               "explanation":"Remove the triple pattern ?x ?p ?y"
+            },
+            {
+               "iri":"http://sqtrl-rules/generic/7",
+               "label":"Make triple pattern optional",
+               "context":{
+                  
+               },
+               "left":"?x ?p ?y",
+               "right":"OPTIONAL{?x ?p ?y}",
+               "cost":"8.0",
+               "explanation":"Make optional the triple pattern ?x ?p ?y"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/1",
+               "label":"Switch sender and recipient",
+               "context":{
+                  
+               },
+               "left":"?l ahpo:sentBy ?x . ?l ahpo:sentTo ?y",
+               "right":"?l ahpo:sentBy ?y . ?l ahpo:sentTo ?x",
+               "cost":"2.0",
+               "explanation":"Exchange the sender (?x) and the recipient (?y) of the letter"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/2",
+               "label":"Replace sender by quoted person",
+               "context":{
+                  
+               },
+               "left":"?l ahpo:sentBy ?x . ?l ahpo:citeName ?y",
+               "right":"?l ahpo:sentBy ?y",
+               "cost":"3.0",
+               "explanation":"Replace the sender (?x) by one of the quoted persons (?y)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/3",
+               "label":"Replace recipient by quoted person",
+               "context":{
+                  
+               },
+               "left":"?l ahpo:sentTo ?x . ?l ahpo:citeName ?y",
+               "right":"?l ahpo:sentTo ?y",
+               "cost":"3.0",
+               "explanation":"Replace the recipient (?x) by one of the quoted persons (?y)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/4",
+               "label":"Replace subject with another related subject",
+               "context":"?l2 dcterms:subject ?x . ?l2 dcterms:subject ?y",
+               "left":"?l1 dcterms:subject ?x",
+               "right":"?l1 dcterms:subject ?y",
+               "exceptions":["FILTER(?x != ?y)"],
+               "cost":"4.0",
+               "explanation":"Replace a subject (?x) by another related subject (?y)\n   "
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/5",
+               "label":"Replace correspondent with subject related sender",
+               "context":"?l1 dcterms:subject ?s . ?l2 ahpo:correspondent ?y . ?l2 dcterms:subject ?s",
+               "left":"?l1 ahpo:correspondent ?x",
+               "right":"?l1 ahpo:correspondent ?y",
+               "cost":"4.5",
+               "explanation":"Replacing the correspondent (?x) by another correspondent (?y) related to a mentioned subject (?s)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/6",
+               "label":"Transform correspondent as a quoted person",
+               "context":{
+                  
+               },
+               "left":"?l ahpo:correspondent ?x",
+               "right":"?l ahpo:citeName ?x",
+               "cost":"3.0",
+               "explanation":"Remove a correspondent (?x) and set it as one of the quoted persons"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/7",
+               "label":"Replace individual label property",
+               "context":{
+                  
+               },
+               "left":"?x rdfs:label ?y",
+               "right":"?x dcterms:title ?y",
+               "exceptions":[
+                  "?x a rdf:Property",
+                  "?x a rdfs:Literal"
+               ],
+               "cost":"0.0",
+               "explanation":"Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label) for an individual\n   "
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/8",
+               "label":"Replace property label property",
+               "context":"?x a rdf:Property",
+               "left":"?p dcterms:title ?y",
+               "right":"?p rdfs:label ?y",
+               "cost":"0.0",
+               "explanation":"Replace the label property used (dcterms:title) with the more appropriated one (rdfs:label) for a property\n   "
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/9",
+               "label":"Generalize to institution membership",
+               "context":"?x ahpot:isMemberOf ?institution",
+               "left":"?s ?p ?x",
+               "right":"?s ?p ?y . ?y ahpot:isMemberOf ?institution",
+               "cost":"3.0",
+               "explanation":"Generalize the person (?x) into any other member of the institution (?institution)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/10",
+               "label":"Generalize to scientific field association",
+               "context":"?x ahpot:scientificField ?field",
+               "left":"?s ?p ?x",
+               "right":"?s ?p ?y . ?y ahpot:scientificField ?field",
+               "cost":"4.0",
+               "explanation":"Generalize the person (?x) into any other person related to the scientific field of (?field)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/11",
+               "label":"Generalize to status association",
+               "context":"?x ahpot:socialAndProfessionalStatus ?status",
+               "left":"?s ?p ?x",
+               "right":"?s ?p ?y . ?y ahpot:socialAndProfessionalStatus ?status\n   ",
+               "cost":"5.0",
+               "explanation":"Generalize the person (?x) by any other person with a similar social and professional status (?status)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/12",
+               "label":"Generalize to people in the same workplace",
+               "context":"?x ahpot:workPlace ?place",
+               "left":"?s ?p ?x",
+               "right":"?s ?p ?y . ?y ahpot:workPlace ?place",
+               "cost":"5.0",
+               "explanation":"Generalize the person (?x) by any other person with a similar workplace (?place)"
+            },
+            {
+               "iri":"http://sqtrl-rules/ahpo/13",
+               "label":"Generalize to people with the same citizenship",
+               "context":"?x ahpot:citizenship ?citizenship",
+               "left":"?s ?p ?x",
+               "right":"?s ?p ?y . ?y ahpot:citizenship ?citizenship",
+               "cost":"5.0",
+               "explanation":"Generalize the person (?x) by any other person with the same citizenship (?citizenship)"
+            }
+         ]
+
+   }
+}

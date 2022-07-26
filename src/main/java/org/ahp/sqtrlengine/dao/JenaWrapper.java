@@ -32,6 +32,8 @@ import org.apache.jena.update.UpdateRequest;
  */
 public class JenaWrapper {
 
+	private static final String DEFAULT_FORMAT = "TURTLE";
+
 	//RDF Model containing all the triples of the database (multiple files)
 	Model model = ModelFactory.createDefaultModel();
 
@@ -41,11 +43,11 @@ public class JenaWrapper {
 	Model updateModel = ModelFactory.createDefaultModel(); 
 
 	String updateFile;
-	
+
 	RDFConnection conn;
 	QueryExecution qExec;
-	private static Logger LOGGER = Logger.getLogger(JenaWrapper.class.getName());
-	
+	private static Logger logger = Logger.getLogger(JenaWrapper.class.getName());
+
 	/**
 	 * 
 	 * @param endpoint sparql endpoint iri
@@ -53,7 +55,7 @@ public class JenaWrapper {
 	public JenaWrapper(String endpoint) {
 		conn = RDFConnectionFactory.connect(endpoint);
 	}
-	
+
 	public void loadGraph(String file) {
 
 		//filesList should never be empty
@@ -62,7 +64,7 @@ public class JenaWrapper {
 		}
 
 		//Construct the model by loading all files in the RDF directory (which is a property to be configured in the .yml file)
-		RDFReaderI localReader = model.getReader("TURTLE");
+		RDFReaderI localReader = model.getReader(DEFAULT_FORMAT);
 		localReader.setProperty("WARN_REDEFINITION_OF_ID","EM_IGNORE");
 
 		try {
@@ -84,7 +86,7 @@ public class JenaWrapper {
 		}
 
 		//Construct the model by loading all files in the RDF directory (which is a property to be configured in the .yml file)
-		RDFReaderI localReader = model.getReader("TURTLE");
+		RDFReaderI localReader = model.getReader(DEFAULT_FORMAT);
 		localReader.setProperty("WARN_REDEFINITION_OF_ID","EM_IGNORE");
 
 		InputStream inputStream = null;
@@ -101,7 +103,7 @@ public class JenaWrapper {
 		inferenceModel = ModelFactory.createRDFSModel(model);
 
 	}
-	
+
 	/**
 	 * Execute a select SPARQL query 
 	 * @param queryString the SELECT SPARQL query 
@@ -111,10 +113,12 @@ public class JenaWrapper {
 	public static ResultSet executeLocalSelectQuery(String queryString, Model model) {
 		Query query = QueryFactory.create(queryString) ;
 
-		QueryExecution qexec = QueryExecutionFactory.create(query, model); 
-		
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
 		return qexec.execSelect();
 	}
+
+
 
 	/**
 	 * Execute a local update SPARQL query (DELETE, INSERT)
@@ -130,7 +134,7 @@ public class JenaWrapper {
 
 		//Update the file by writing the new model value
 		OutputStream out = new FileOutputStream(new File(updateFile));
-		updateModel.write(out, "TURTLE");
+		updateModel.write(out, DEFAULT_FORMAT);
 
 	}
 
@@ -138,17 +142,14 @@ public class JenaWrapper {
 	/**
 	 * Execute a SELECT SPARQL query using a read SPARQL endpoint
 	 * @param queryString the SELECT SPARQL query
-	 * @param endpoint the URL of SPARQL endpoint
 	 * @return the results of the query
 	 */
-	public ResultSet executeRemoteSelectQuery(String queryString, String endpoint) {	
+	public ResultSet executeRemoteSelectQuery(String queryString) {	
 		Query query = QueryFactory.create(queryString) ;
 		qExec = conn.query(query) ;
-		ResultSet execResults = qExec.execSelect();
-		return execResults; 
-
+		return qExec.execSelect();
 	}
-	
+
 	/**
 	 * Should be called after iterating over the result of a query execution
 	 */
@@ -159,19 +160,15 @@ public class JenaWrapper {
 	/**
 	 * Execute a SELECT SPARQL query using a read SPARQL endpoint
 	 * @param queryString the SELECT SPARQL query
-	 * @param endpoint the URL of SPARQL endpoint
 	 * @return the results of the query
 	 */
-	public Model executeRemoteConstructQuery(String queryString, String endpoint) {
-		RDFConnection conn = RDFConnectionFactory.connect(endpoint);	
+	public Model executeRemoteConstructQuery(String queryString) {
 		Query query = QueryFactory.create(queryString) ;
 
 		qExec = conn.query(query) ;
-		Model result = qExec.execConstruct();
-		return result; 
-
+		return qExec.execConstruct();
 	}
-	
+
 	/**
 	 * Execute an update SPARQL query using a SPARQL update endpoint
 	 * @param queryString the SPARQL query to update the dataset
@@ -179,12 +176,12 @@ public class JenaWrapper {
 	 * @return the results of the query
 	 */
 	public void executeRemoteUpdateQuery(String queryString, String endpoint) {
-		LOGGER.info("--- Update query ---");
-		LOGGER.info(queryString);
-		
+		logger.info("--- Update query ---");
+		logger.info(queryString);
+
 		UpdateRequest request = UpdateFactory.create(queryString) ;
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(request, endpoint);
-		
+
 		processor.execute();
 	}
 
@@ -193,7 +190,6 @@ public class JenaWrapper {
 	 * @return
 	 */
 	public int getCount() {
-		int count;
 
 		String query = "SELECT (COUNT(*) as ?c)\r\n" + 
 				"WHERE{ \r\n" + 
@@ -201,8 +197,7 @@ public class JenaWrapper {
 				"  }";
 
 		ResultSet results = executeLocalSelectQuery(query, model);
-		count = results.next().getLiteral("?c").getInt();
 
-		return count;
+		return results.next().getLiteral("?c").getInt();
 	}
 }

@@ -29,7 +29,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
-public class RuleApplicationTest {
+class RuleApplicationTest {
 	private static final Logger logger = LogManager.getLogger(RuleApplicationTest.class);
 	private static List<TransformationRule> rules;
 	private static List<Prefix> prefixes;
@@ -167,7 +167,7 @@ public class RuleApplicationTest {
 
 		
 		assertNotNull(ruleApplications);
-		assertNotEquals(ruleApplications.size(), 0);
+		assertNotEquals(0, ruleApplications.size());
 		
 		for(RuleApplication application : ruleApplications) {
 			logger.warn("Explication: " + application.getExplanation());

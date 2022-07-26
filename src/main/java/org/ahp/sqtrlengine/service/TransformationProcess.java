@@ -26,9 +26,9 @@ public abstract class TransformationProcess {
 
 	protected RuleApplyer ruleApplyer;
 	
-	protected ArrayList<TransformationNode> nodes = new ArrayList<>();
+	protected List<TransformationNode> nodes = new ArrayList<>();
 	
-	public TransformationProcess(List<TransformationRule> rules, String query, String sparqlEndpoint) {
+	protected TransformationProcess(List<TransformationRule> rules, String query, String sparqlEndpoint) {
 		this.rules = rules;
 		this.query = QueryUtils.parseQuery(query);
 		this.sparqlEndpoint = sparqlEndpoint;
@@ -68,7 +68,7 @@ public abstract class TransformationProcess {
 		return nodes;
 	}
 
-	public void setNodes(ArrayList<TransformationNode> nodes) {
+	public void setNodes(List<TransformationNode> nodes) {
 		this.nodes = nodes;
 	}
 	

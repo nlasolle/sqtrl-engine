@@ -35,7 +35,7 @@ public class EvaluationManager {
 
 	public static CombinationResult runEvaluation(ParameterCombination combination) {
 		CombinationResult result = new CombinationResult();	
-		Set<Double> applicationTimes = new HashSet<Double>();
+		Set<Double> applicationTimes = new HashSet<>();
 		int queries = 0;
 
 		Instant start = Instant.now() ; 
@@ -81,9 +81,9 @@ public class EvaluationManager {
 		result.setAverageRuleApplicationTime(averageApplicationTime);
 		result.setGeneratedQueries(queries);
 
-		logger.warn("Full Tree time " + fullTreeTime + " s");
-		logger.warn("Average rule application time " + averageApplicationTime + " s");
-		logger.warn("#Generated queries " + queries);
+		logger.warn("Full Tree time {fullTreeTime} s");
+		logger.warn("Average rule application time {averageApplicationTime} s");
+		logger.warn("#Generated queries {queries}");
 
 		return result;
 	}
@@ -95,7 +95,7 @@ public class EvaluationManager {
 	 * @throws IOException 
 	 */
 	public static List<ParameterCombination> prepareEvaluation() throws InvalidRuleFileException, IOException {
-		List<ParameterCombination> combinations = new ArrayList<ParameterCombination>();
+		List<ParameterCombination> combinations = new ArrayList<>();
 
 		/*** Rule file management ****/
 		//First get the full rule file and then create sub sets with various sizes
@@ -129,11 +129,11 @@ public class EvaluationManager {
 		RuleUtils.replacePrefixes(genericRuleSet, genericPrefixes);
 
 		/*** Dataset management ***/
-		String fullAhpDataset = SPARQL_ENDPOINT + "full_ahp_corpus",
-				smallAhpDataset = SPARQL_ENDPOINT + "small_ahp_corpus",
-				mediumAhpDataset = SPARQL_ENDPOINT + "medium_ahp_corpus",
-				dbpediaDataset = "https://dbpedia.org/sparql",
-				microsoftDataset = "https://makg.org/sparql";
+		String fullAhpDataset = SPARQL_ENDPOINT + "full_ahp_corpus";
+		String smallAhpDataset = SPARQL_ENDPOINT + "small_ahp_corpus";
+		String mediumAhpDataset = SPARQL_ENDPOINT + "medium_ahp_corpus";
+		String dbpediaDataset = "https://dbpedia.org/sparql";
+		String microsoftDataset = "https://makg.org/sparql";
 
 		/*** Query management ***/
 		//Randomnly select the queries.
@@ -149,10 +149,10 @@ public class EvaluationManager {
 		logger.warn(i);
 		String	bigQueryFile = "evaluation/queries/bigEvaluationQuery" + i + ".rq";
 		i = ThreadLocalRandom.current().nextInt(1, 4);
-		
+
 		logger.warn(i);
 		String dbpediaQueryFile = "evaluation/queries/dbpedia" + i + ".rq";
-		
+
 		i = ThreadLocalRandom.current().nextInt(1, 4);
 		logger.warn(i);
 		String microsoftQueryFile = "evaluation/queries/microsoft" + i + ".rq";
@@ -162,9 +162,9 @@ public class EvaluationManager {
 		String bigQuery = Resources.toString(EvaluationManager.class.getClassLoader().getResource(bigQueryFile), StandardCharsets.UTF_8);
 		String dbpediaQuery = Resources.toString(EvaluationManager.class.getClassLoader().getResource(dbpediaQueryFile), StandardCharsets.UTF_8);
 		String microsoftQuery = Resources.toString(EvaluationManager.class.getClassLoader().getResource(microsoftQueryFile), StandardCharsets.UTF_8);
-		
+
 		String hpCorpusName = "Henri Poincaré correspondence corpus";
-		
+
 		//C0
 		combinations.add(new ParameterCombination(hpCorpusName, 10, true, mediumRuleSet, fullAhpDataset , mediumQuery));
 		//C1
@@ -197,7 +197,7 @@ public class EvaluationManager {
 		combinations.add(new ParameterCombination(hpCorpusName, 10, true, mediumRuleSet, fullAhpDataset , mediumQuery));
 		//C15
 		combinations.add(new ParameterCombination(hpCorpusName, 10, true, mediumRuleSet, fullAhpDataset , bigQuery));
-	
+
 		return combinations;
 
 	}

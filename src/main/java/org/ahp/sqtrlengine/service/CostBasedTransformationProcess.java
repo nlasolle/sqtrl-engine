@@ -44,7 +44,9 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 		   The goal is to find the rule applicable with the lower total cost
 		 */
 		double currentBestCost = maxCost;
-		TransformationNode pendingNode = null, candidateNode=null,  candidateExistingNode = null;
+		TransformationNode pendingNode = null;
+		TransformationNode candidateNode = null;
+		TransformationNode candidateExistingNode = null;
 
 		for(TransformationRule rule: rules) {
 			for(TransformationNode existingNode : nodes) {
@@ -81,6 +83,12 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 								.filter(r -> application.getRuleIri().equals(r.getIri()))
 								.findAny()
 								.orElse(null);
+						
+						if(currentRule == null) {
+							logger.info("No rule with iri {application.getRuleIri()} has been found in the rule list");
+							break;
+						}
+						
 						pendingNode.setGlobalCost(existingNode.getGlobalCost() + currentRule.getCost());
 
 						pendingNode.setParentNode(existingNode);
@@ -103,8 +111,8 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 							}
 						} 
 
-						logger.info("Pending node application " + pendingNode.getApplication());
-						logger.info("Pending node cost " + pendingNode.getGlobalCost());
+						logger.info("Pending node application {pendingNode.getApplication()}");
+						logger.info("Pending node cost {pendingNode.getGlobalCost()}");
 
 					}
 				}

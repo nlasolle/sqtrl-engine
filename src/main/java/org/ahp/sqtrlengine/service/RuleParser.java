@@ -10,12 +10,12 @@ import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 
 public interface RuleParser {
-
+	
 	//Check the validity of rules
 	public boolean isRuleFileValid() throws FileNotFoundException, InvalidFileTypeException, InvalidRuleFileException;
 	
 	//Parse the transformation rules
-	public List<TransformationRule> parseRuleFile() throws FileNotFoundException, IOException, InvalidRuleFileException;
+	public List<TransformationRule> parseRuleFile() throws IOException, InvalidRuleFileException;
 	
 	public List<Prefix> parsePrefixes();
 

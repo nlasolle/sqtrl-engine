@@ -15,8 +15,7 @@ public class RuleUtils {
 				rule.setLeft(replaceAllPrefixes(rule.getLeft(), prefix));
 				rule.setRight(replaceAllPrefixes(rule.getRight(), prefix));
 
-				List<String> exceptions = new ArrayList<String>();
-
+				List<String> exceptions = new ArrayList<>();		
 				
 				for(String exception : rule.getExceptions()) {
 					exceptions.add(replaceAllPrefixes(exception, prefix));
@@ -34,9 +33,9 @@ public class RuleUtils {
 	 * @return
 	 */
 	private static String replaceAllPrefixes(String field, Prefix prefix) {
-		while(field.contains(prefix.getPrefix())) {
-			int prefixIndex = field.indexOf(prefix.getPrefix());
-			int propertyIndex = prefixIndex + prefix.getPrefix().length();
+		while(field.contains(prefix.getAbbreviation())) {
+			int prefixIndex = field.indexOf(prefix.getAbbreviation());
+			int propertyIndex = prefixIndex + prefix.getAbbreviation().length();
 			int nextSpaceIndex = field.indexOf(" ", propertyIndex);
 			
 			if (nextSpaceIndex == -1) {

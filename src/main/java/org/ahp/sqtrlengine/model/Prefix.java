@@ -2,16 +2,25 @@ package org.ahp.sqtrlengine.model;
 
 
 /**
- * Represent a Semantic Web namespace with the associated abreviation
+ * Represent a Semantic Web namespace with the associated abbreviation
  * @author Nicolas Lasolle
  *
  */
 public class Prefix {
 
 	private String namespace;
-	private String prefix;
+	private String abbreviation;
 
-
+	public Prefix() {
+		
+	}
+	
+	public Prefix(String namespace, String abbreviation) {
+		this.namespace = namespace;
+		this.abbreviation = abbreviation;
+	}
+	
+	
 	public String getNamespace() {
 		return namespace;
 	}
@@ -20,12 +29,12 @@ public class Prefix {
 		this.namespace = namespace;
 	}
 
-	public String getPrefix() {
-		return prefix;
+	public String getAbbreviation() {
+		return abbreviation;
 	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 	
 	
@@ -34,7 +43,7 @@ public class Prefix {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+		result = prime * result + ((abbreviation == null) ? 0 : abbreviation.hashCode());
 		return result;
 	}
 
@@ -52,17 +61,17 @@ public class Prefix {
 				return false;
 		} else if (!namespace.equals(other.namespace))
 			return false;
-		if (prefix == null) {
-			if (other.prefix != null)
+		if (abbreviation == null) {
+			if (other.abbreviation != null)
 				return false;
-		} else if (!prefix.equals(other.prefix))
+		} else if (!abbreviation.equals(abbreviation))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString(){
-		return "@prefix "+ prefix + ": <" + namespace + ">";
+		return "@prefix "+ abbreviation + ": <" + namespace + ">";
 	}
 	
 }

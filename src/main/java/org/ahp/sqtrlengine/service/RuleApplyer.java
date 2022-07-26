@@ -45,9 +45,9 @@ public class RuleApplyer {
 	}
 
 	public List<RuleApplication> getRuleApplications(Query query, TransformationRule rule, String sparqlEndpoint){
-		logger.debug("Searching for applications for rule " + rule.getIri());
+		logger.debug("Searching for applications for rule {rule.getIri()}");
 
-		List<RuleApplication> applications = new ArrayList<RuleApplication>(); 
+		List<RuleApplication> applications = new ArrayList<>(); 
 
 		logger.info(rule.getContext() == null);
 		logger.info(rule.getContext().isEmpty());
@@ -57,7 +57,7 @@ public class RuleApplyer {
 			List<HashMap<String, String>> contextBindingsList = getContextBindings(rule, sparqlEndpoint);
 
 			if(contextBindingsList.isEmpty()) {
-				logger.debug("No application for rule " + rule.getIri() + " context field and for the SPARQL endpoint " + sparqlEndpoint);
+				logger.debug("No application for rule {rule.getIri} context field and for the SPARQL endpoint {sparqlEndpoint}");
 				return applications;
 			}
 
@@ -122,7 +122,8 @@ public class RuleApplyer {
 				"PREFIX dcterms: <http://purl.org/dc/terms/>\n" + 
 				"SELECT";
 
-		String varsPattern = "", graphPattern = "";
+		String varsPattern = "";
+		String graphPattern = "";
 
 		Pattern pattern = Pattern.compile("(http|https):/[^\\)\\>\\s]*");
 		Matcher matcher = pattern.matcher(explanation);
@@ -149,7 +150,7 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
-		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
+		ResultSet results = wrapper.executeRemoteSelectQuery(query);
 
 		//Save the bindings with the values for each variable
 		if( results.hasNext() ){
@@ -163,6 +164,7 @@ public class RuleApplyer {
 				} 
 			}
 		}
+		
 		wrapper.closeExecution();
 		application.setExplanation(explanation);	
 	}
@@ -180,8 +182,7 @@ public class RuleApplyer {
 		List<String> variables = getVariablesFromString(rule.getContext());
 
 		//Execute the query over the SPARQL endpoint
-		logger.info("query bug " + query);
-		ResultSet results = wrapper.executeRemoteSelectQuery(query, sparqlEndpoint);
+		ResultSet results = wrapper.executeRemoteSelectQuery(query);
 
 		//Save the bindings with the values for each variable
 		while( results.hasNext() ){
@@ -236,7 +237,7 @@ public class RuleApplyer {
 	public void retrieveLeftBindings(TransformationRule rule, RuleApplication application) {
 		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(application.getInitialQuery());
 
-		HashMap<String, String> contextBinding = application.getContextBinding();
+		HashMap<String, String> contextBinding = (HashMap<String, String>) application.getContextBinding();
 
 		//First, we construct the left triples by assigning context binding variable values
 		List<Triple> leftTriples = getBoundLeftTriples(rule, application.getInitialQuery(), contextBinding);
@@ -320,7 +321,7 @@ public class RuleApplyer {
 	public List<RuleApplication> retrieveLeftBindingsBis (TransformationRule rule, Query query, HashMap<String, String> contextBindings) {
 	
 		List<Triple> queryTriples = QueryUtils.extractTriplePatterns(query);
-		List<RuleApplication> applications = new ArrayList<RuleApplication>();
+		List<RuleApplication> applications = new ArrayList<>();
 		RuleApplication application;
 		//First, we construct the left triples by assigning context binding variable values
 		List<Triple> leftTriples = getBoundLeftTriples(rule, query, contextBindings);
@@ -597,10 +598,8 @@ public class RuleApplyer {
 			}
 		}
 
-
 		generatedQuery += "}";
 
 		return generatedQuery;
 	}
-
 }

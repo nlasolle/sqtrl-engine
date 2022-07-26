@@ -10,6 +10,7 @@ import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
+import org.ahp.sqtrlengine.service.JSONRuleParser;
 import org.ahp.sqtrlengine.service.XMLRuleParser;
 import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,7 @@ class RuleParserTest {
 
 	private static final Logger logger = LogManager.getLogger(RuleParserTest.class);
 	private static List<Prefix> prefixes;
+	
 	@Test
 	void testNullFile() {
 		XMLRuleParser parser = new XMLRuleParser(null);
@@ -44,7 +46,7 @@ class RuleParserTest {
 		File nonExistingFile = new File(fileName);
 		XMLRuleParser parser = new XMLRuleParser(nonExistingFile);
 		Assertions.assertThrows(FileNotFoundException.class, () -> {
-			parser.parseRuleFile();
+			parser.isRuleFileValid();
 		});
 	}
 
@@ -55,7 +57,7 @@ class RuleParserTest {
 		XMLRuleParser parser = new XMLRuleParser(invalidFile);
 		
 		Assertions.assertThrows(InvalidFileTypeException.class, () -> {
-			parser.parseRuleFile();
+			parser.isRuleFileValid();
 		});
 	}
 
@@ -81,8 +83,8 @@ class RuleParserTest {
 	}
 	
 	@ParameterizedTest
-	@CsvSource({"validRules.xml, 13"})
-	void testRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {
+	@CsvSource({"validRules.xml, 20"})
+	void testXMLRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {
 		File validFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser(validFile);
@@ -92,7 +94,23 @@ class RuleParserTest {
 		RuleUtils.replacePrefixes(rules, prefixes);
 		logger.info(rules);
 		Assertions.assertNotNull(rules);
-		Assertions.assertEquals(rules.size(), numberOfRules);;
+		Assertions.assertEquals(numberOfRules, rules.size());
+
+	}
+	
+	@ParameterizedTest
+	@CsvSource({"validRules.json, 20"})
+	void testJSONRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {
+		File validFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
+
+		JSONRuleParser parser = new JSONRuleParser(validFile);
+		
+		List<TransformationRule> rules = parser.parseRuleFile();
+		prefixes = parser.parsePrefixes();
+		logger.info(rules);
+		//RuleUtils.replacePrefixes(rules, prefixes);
+		Assertions.assertNotNull(rules);
+		Assertions.assertEquals(numberOfRules, rules.size());
 
 	}
 }

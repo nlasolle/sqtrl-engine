@@ -3,6 +3,7 @@ package org.ahp.sqtrlengine.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
@@ -15,10 +16,10 @@ import org.apache.jena.query.Query;
 public class RuleApplication {
 
 	private String ruleIri; // Id of the transformation rule;
-	private HashMap<String, String> contextBinding = new HashMap<>();
-	private HashMap<String, String> leftBinding = new HashMap<>();
-	private List<Triple> leftTriples = new ArrayList<Triple>();
-	private List<Triple> rightTriples = new ArrayList<Triple>();
+	private Map<String, String> contextBinding = new HashMap<>();
+	private Map<String, String> leftBinding = new HashMap<>();
+	private List<Triple> leftTriples = new ArrayList<>();
+	private List<Triple> rightTriples = new ArrayList<>();
 	
 	private Query initialQuery;
 	private Query generatedQuery;
@@ -49,19 +50,19 @@ public class RuleApplication {
 		this.generatedQuery = generatedQuery;
 	}
 
-	public HashMap<String, String> getContextBinding() {
+	public Map<String, String> getContextBinding() {
 		return contextBinding;
 	}
 	
-	public void setContextBinding(HashMap<String, String> contextBinding) {
+	public void setContextBinding(Map<String, String> contextBinding) {
 		this.contextBinding = contextBinding;
 	}
 	
-	public HashMap<String, String> getLeftBinding() {
+	public Map<String, String> getLeftBinding() {
 		return leftBinding;
 	}
 	
-	public void setLeftBinding(HashMap<String, String> leftBinding) {
+	public void setLeftBinding(Map<String, String> leftBinding) {
 		this.leftBinding = leftBinding;
 	}
 

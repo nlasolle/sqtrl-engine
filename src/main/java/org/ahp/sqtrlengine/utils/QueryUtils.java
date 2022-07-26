@@ -50,7 +50,7 @@ public class QueryUtils {
 	 * @return
 	 */
 	public static List<Triple>  extractTriplePatterns(Query query) {
-		final List<Triple> triples = new ArrayList<Triple>();
+		final List<Triple> triples = new ArrayList<>();
 
 
 		ElementWalker.walk(query.getQueryPattern(),
@@ -75,7 +75,7 @@ public class QueryUtils {
 	 * @return
 	 */
 	public static List<Triple>  extractTriplePatterns(Element element) {
-		final List<Triple> triples = new ArrayList<Triple>();
+		final List<Triple> triples = new ArrayList<>();
 
 
 		ElementWalker.walk(element,
@@ -96,7 +96,7 @@ public class QueryUtils {
 	}
 
 	public static List<ElementFilter> extractFilters(Query query) {
-		List<ElementFilter> filters = new ArrayList<ElementFilter>();
+		List<ElementFilter> filters = new ArrayList<>();
 		
 		ElementWalker.walk(query.getQueryPattern(),
 				new ElementVisitorBase() {
@@ -133,7 +133,6 @@ public class QueryUtils {
 				return false;
 			}
 		}
-		
 		
 		return true;
 	}
