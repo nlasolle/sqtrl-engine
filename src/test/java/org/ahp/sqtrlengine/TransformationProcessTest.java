@@ -1,4 +1,4 @@
-package org.ahp.sqtrl_engine;
+package org.ahp.sqtrlengine;
 
 
 import java.io.File;
