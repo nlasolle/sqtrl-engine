@@ -19,18 +19,17 @@ public class TransformationRule {
 	//Graph pattern replacing the left pattern
 	private String right;
 
-	//A list of graph pattern, representing exception for which the rule should be applied
-	private List<String> exceptions = new ArrayList<>();
-
 	//Rule transformation cost to prevent application of the rule given a maximum process cost
 	private float cost; 
-
-	//TO DO remove this field
-	private String type;
+	
+	//A list of graph pattern, representing exception for which the rule should be applied
+	private List<String> exceptions = new ArrayList<>();
 
 	//Rule explanation template, whose instantiation can reused variables from context, left, right fields
 	private String explanation; 
 
+	//To manage special rule types, with different behaviour from the general rules (ex: numerical extension within filter)
+		private String type;
 	
 	public TransformationRule() {
 
@@ -39,6 +38,18 @@ public class TransformationRule {
 	public TransformationRule(String iri, String label) {
 		this.iri = iri;
 		this.label = label;
+	}
+	
+	public TransformationRule(TransformationRule rule) {
+		this.type = rule.type;
+		this.iri = rule.iri;
+		this.label = rule.label;
+		this.context = rule.context;
+		this.left = rule.left;
+		this.right = rule.right;
+		this.cost = rule.cost;
+		this.exceptions = (ArrayList<String>) ((ArrayList) rule.exceptions).clone();
+		this.explanation = rule.explanation;
 	}
 
 	
@@ -108,7 +119,8 @@ public class TransformationRule {
 
 	@Override
 	public String toString(){
-		return  iri + " {" +
+		return  "{" +
+				"\n\tiri = " + iri +
 				"\n\tlabel = " + label +
 				"\n\tcontext = " + context +
 				"\n\tleft = " + left +

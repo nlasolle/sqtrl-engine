@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.ahp.sqtrlengine.model.Prefix;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -17,7 +18,7 @@ import org.apache.jena.sparql.syntax.ElementWalker;
 
 /**
  * Query manipulation using Jena libs
- * @author lasolle1
+ * @author Nicolas Lasolle
  *
  */
 public class QueryUtils {
@@ -28,30 +29,28 @@ public class QueryUtils {
 	 * @return a Query object
 	 */
 	public static Query parseQuery(String queryString) {
+		if(queryString == null || queryString.isBlank()) {
+			return new Query();
+		}
+
 		return QueryFactory.create(queryString);
 	}
-	
-	
+
+
 	/**
 	 * Extract requested var (within SELECT clause)
-	 * @return
+	 * @return a list of variables
 	 */
 	public static List<Var> extractSelectVariables(Query query) {
-
-		System.out.println(query.getGroupBy());
-		System.out.println(query.getLimit());
-		System.out.println(query.isDistinct());
-		System.out.println("VARS " + query.getResultVars());
 		return query.getProjectVars();
 	}
-	
+
 	/**
-	 * Extract triples patterns from a query
+	 * Extract triple patterns from a query
 	 * @return
 	 */
 	public static List<Triple>  extractTriplePatterns(Query query) {
 		final List<Triple> triples = new ArrayList<>();
-
 
 		ElementWalker.walk(query.getQueryPattern(),
 				new ElementVisitorBase() {
@@ -62,21 +61,20 @@ public class QueryUtils {
 
 				for( ;  triplesIterator.hasNext() ;) {
 					TriplePath path = triplesIterator.next();
-					
+
 					triples.add(path.asTriple());
 				}
 			}});
 
 		return triples;
 	}
-	
+
 	/**
 	 * Extract triples patterns from an element
 	 * @return
 	 */
 	public static List<Triple>  extractTriplePatterns(Element element) {
 		final List<Triple> triples = new ArrayList<>();
-
 
 		ElementWalker.walk(element,
 				new ElementVisitorBase() {
@@ -87,7 +85,7 @@ public class QueryUtils {
 
 				for( ;  triplesIterator.hasNext() ;) {
 					TriplePath path = triplesIterator.next();
-					
+
 					triples.add(path.asTriple());
 				}
 			}});
@@ -97,7 +95,7 @@ public class QueryUtils {
 
 	public static List<ElementFilter> extractFilters(Query query) {
 		List<ElementFilter> filters = new ArrayList<>();
-		
+
 		ElementWalker.walk(query.getQueryPattern(),
 				new ElementVisitorBase() {
 
@@ -105,7 +103,7 @@ public class QueryUtils {
 			public void visit(ElementFilter el) {
 				filters.add(el);
 			}});
-		
+
 		return filters;
 	}
 
@@ -118,23 +116,56 @@ public class QueryUtils {
 	public static boolean equivalent(Query q1, Query q2) {
 		List<Triple> tp1 = QueryUtils.extractTriplePatterns(q1);
 		List<Triple> tp2 = QueryUtils.extractTriplePatterns(q2);
-		
+
 		for(Triple t : tp1) {
 			if(!tp2.contains(t)) {
 				return false;
 			}
 		}
-		
+
 		List<ElementFilter> fp1 = QueryUtils.extractFilters(q1);
 		List<ElementFilter> fp2 = QueryUtils.extractFilters(q1);
-		
+
 		for(ElementFilter f : fp1) {
 			if(!fp2.contains(f)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
+	/**
+	 * Indicate if a string representing a graph pattern is valid
+	 * @param triplePattern the triple pattern as a string
+	 * @return true if the pattern is valid
+	 */
+	public static boolean isGraphPatternValid(String pattern, List<Prefix> prefixes) {
+
+		if (pattern == null || pattern.isBlank()) {
+			return false;
+		}
+		
+		/* We use the Jena query parser to check the given pattern.
+		   This is not ideal, we should rather find a Jena set
+		    of functions to perform the check directly on the pattern */
+		
+		String queryString = "";
+		
+		for(Prefix p : prefixes) {
+			queryString+= "PREFIX " + p.getAbbreviation() + ": <" + p.getNamespace() + ">\n";
+		}
+		
+		queryString += "\nSELECT * WHERE {\n\t" + pattern + "\n}";
+		
+		System.out.println("QUERY STRING " + queryString) ;
+		try {
+			QueryUtils.parseQuery(queryString);
+		} catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
 }

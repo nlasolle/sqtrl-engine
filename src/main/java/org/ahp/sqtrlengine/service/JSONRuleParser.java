@@ -14,7 +14,10 @@ import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
+import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,6 +28,8 @@ import org.json.JSONObject;
  *
  */
 public class JSONRuleParser implements RuleParser {
+	private static final Logger logger = LogManager.getLogger(JSONRuleParser.class);
+	
 	private JSONObject jsonContent; 
 
 	public JSONRuleParser(File ruleFile) throws IOException {
@@ -49,6 +54,7 @@ public class JSONRuleParser implements RuleParser {
 	@Override
 	public List<TransformationRule> parseRuleFile()
 			throws IOException, InvalidRuleFileException {
+		List<String> existingIri = new ArrayList<>();
 		List<TransformationRule> rules = new ArrayList<>();
 		JSONArray jsonRules = jsonContent.getJSONObject("SQTRule").getJSONArray("rules");
 
@@ -60,6 +66,12 @@ public class JSONRuleParser implements RuleParser {
 					jsonRule.getString("label")
 					);
 
+			//First check, iri must be unique. If not, we skip the rule
+			if(rule.getIri() != null && existingIri.contains(rule.getIri())) {
+				logger.info("A rule with iri {tempRule.getIri()} has already been defined. Skipping this rule");
+				break;
+			}
+			
 			rule.setContext(jsonRule.getString("context"));
 			rule.setLeft(jsonRule.getString("left"));
 			rule.setRight(jsonRule.getString("right"));
@@ -76,7 +88,8 @@ public class JSONRuleParser implements RuleParser {
 
 				rule.setExceptions(exceptions);
 			}
-			rules.add(rule);
+			rules.add(RuleUtils.formatRule(rule));
+			existingIri.add(rule.getIri());
 		}
 		return rules;
 

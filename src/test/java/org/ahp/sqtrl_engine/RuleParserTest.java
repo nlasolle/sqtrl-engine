@@ -82,6 +82,7 @@ class RuleParserTest {
 
 	}
 	
+	
 	@ParameterizedTest
 	@CsvSource({"validRules.xml, 20"})
 	void testXMLRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {

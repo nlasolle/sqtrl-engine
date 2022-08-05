@@ -61,11 +61,11 @@ public class Prefix {
 				return false;
 		} else if (!namespace.equals(other.namespace))
 			return false;
-		if (abbreviation == null) {
-			if (other.abbreviation != null)
+		if (abbreviation == null && other.abbreviation != null) {
 				return false;
-		} else if (!abbreviation.equals(abbreviation))
+		} else if (!abbreviation.equals(other.abbreviation))
 			return false;
+		
 		return true;
 	}
 
