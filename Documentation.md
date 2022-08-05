@@ -63,7 +63,7 @@ The last stable version is available on the [Maven website](https://maven.apache
 Maven relies on the creation of a configuration file, named pom.xml,
  which contains information about the project and configuration details used by Maven to build the project.
 
-[](https://maven.apache.org/images/maven-logo-black-on-white.png)
+![](https://maven.apache.org/images/maven-logo-black-on-white.png)
 
 ## Project architecture
 
