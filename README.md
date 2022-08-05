@@ -20,10 +20,11 @@ This software is governed by the CeCILL licence. See licence.txt for details abo
 
 # References
 
-Bruneau, O., Lasolle, N., Lieber, J., Nauer, E., Pavlova, S., & Rollet, L. (2021). Applying and developing semantic web technologies for exploiting a corpus in history of science: The case study of the Henri Poincaré correspondence. Semantic Web, 12(2), 359-378.
+Bruneau, O., Lasolle, N., Lieber, J., Nauer, E., Pavlova, S., & Rollet, L. (2021). "Applying and Developing Semantic Web Technologies for Exploiting a Corpus in History of Science: the Case Study of the Henri Poincaré Correspondence". *Semantic Web – Interoperability, Usability, Applicability*. 12(2), (pp. 359-378). [10.3233/SW-200400](http://doi.org/10.3233/SW-200400).
 
-Bruneau, O., Gaillard, E., Lasolle, N., Lieber, J., Nauer, E., & Reynaud, J. (2017). A SPARQL query transformation rule language—application to retrieval and adaptation in case-based reasoning. In International Conference on Case-Based Reasoning (pp. 76-91). Springer, Cham.
+Bruneau, O., Gaillard, E., Lasolle, N., Lieber, J., Nauer, E., & Reynaud, J. (2017). "A SPARQL Query Transformation Rule Language — Application to
+Retrieval and Adaptation in Case-Based Reasoning". *Case-Based Reasoning Research and Development. ICCBR 2017* (Trondheim, Norway). Edited by David Aha and Jean Lieber. Lecture Notes in Computer Science. Springer, Cham. (pp. 76-91). [10.1007/978-3-319-61030-6_6](http://doi.org/10.1007/978-3-319-61030-6_6).
 
-Lasolle, N., Bruneau, O., Lieber, J., Nabonnand, P., & Rollet, L. (2021). A Semantic Web Navigation Tool for Exploring the Henri Poincaré Correspondence Corpus. In Proceedings of the International Joint Workshop on Semantic Web and Ontology Design for Cultural Heritage.
+Lasolle, N., Bruneau, O., Lieber, J., Nabonnand, P., & Rollet, L. (2021). "A Semantic Web Navigation Tool for Exploring the Henri Poincaré Correspondence Corpus". *Proceedings of the International Joint Workshop on Semantic Web and Ontology Design for Cultural Heritage co-located with the Bolzano Summer of Knowledge 2021 (BOSK 2021)* (Bozen-Bolzano, Italie). Editeb by Antonis Bikakis, Roberta Ferrario, Stéphane Jean, Béatrice Markhoff, Alessandro Mosca and Marianna Nicolosi Asmundo. CEUR-WS.
 
-Lasolle, N., Bruneau, O., Lieber, J., Nauer, E., & Pavlova, S. (2020). Assisting the RDF Annotation of a Digital Humanities Corpus using Case-Based Reasoning. In International Semantic Web Conference (pp. 617-633). Springer, Cham.
+Lasolle, N., Bruneau, O., Lieber, J., Nauer, E., & Pavlova, S. (2020). "Assisting the RDF Annotation of a Digital Humanities Corpus using Case-Based Reasoning". *The Semantic Web-ISWC 2020*. Edited by Jeff Z. Pan, Valentina Tamma, Claudia d’Amato, Krzysztof Janowicz, Bo Fu, Axel Polleres, Oshani Seneviratne and Lalana Kagal. Springer, Cham. (pp. 617-633). DOI : [10.1007/978-3-030-62466-8_38](http://doi.org/10.1007/978-3-030-62466-8_38).
