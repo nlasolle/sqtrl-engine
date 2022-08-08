@@ -116,7 +116,7 @@ public class XMLRuleParser implements RuleParser {
 			
 			//First check, iri must be unique. If not, we skip the rule
 			if(rule.getIri() != null && existingIri.contains(rule.getIri())) {
-				logger.info("A rule with iri {tempRule.getIri()} has already been defined. Skipping this rule");
+				logger.info("A rule with iri {} has already been defined. Skipping this rule.", rule.getIri());
 				break;
 			}
 

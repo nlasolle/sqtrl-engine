@@ -29,7 +29,7 @@ import org.json.JSONObject;
  */
 public class JSONRuleParser implements RuleParser {
 	private static final Logger logger = LogManager.getLogger(JSONRuleParser.class);
-	
+
 	private JSONObject jsonContent; 
 
 	public JSONRuleParser(File ruleFile) throws IOException {
@@ -68,10 +68,10 @@ public class JSONRuleParser implements RuleParser {
 
 			//First check, iri must be unique. If not, we skip the rule
 			if(rule.getIri() != null && existingIri.contains(rule.getIri())) {
-				logger.info("A rule with iri {tempRule.getIri()} has already been defined. Skipping this rule");
+				logger.info("A rule with iri {} has already been defined. Skipping this rule", rule.getIri());
 				break;
 			}
-			
+
 			rule.setContext(jsonRule.getString("context"));
 			rule.setLeft(jsonRule.getString("left"));
 			rule.setRight(jsonRule.getString("right"));

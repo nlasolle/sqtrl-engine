@@ -111,7 +111,6 @@ public class TransformationNode implements Cloneable{
 		try {
 			o = super.clone();
 		} catch(CloneNotSupportedException cnse) {
-
 			cnse.printStackTrace(System.err);
 		}
 		return o;

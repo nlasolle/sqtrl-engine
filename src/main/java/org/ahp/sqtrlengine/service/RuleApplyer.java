@@ -45,19 +45,17 @@ public class RuleApplyer {
 	}
 
 	public List<RuleApplication> getRuleApplications(Query query, TransformationRule rule, String sparqlEndpoint){
-		logger.debug("Searching for applications for rule {rule.getIri()}");
+		logger.debug("Searching for applications for rule {}", rule.getIri());
 
 		List<RuleApplication> applications = new ArrayList<>(); 
 
-		logger.info(rule.getContext() == null);
-		logger.info(rule.getContext().isEmpty());
 		//First situation, rule context is not empty
 		if(!rule.getContext().isEmpty()) {
 		
 			List<HashMap<String, String>> contextBindingsList = getContextBindings(rule, sparqlEndpoint);
 
 			if(contextBindingsList.isEmpty()) {
-				logger.debug("No application for rule {rule.getIri} context field and for the SPARQL endpoint {sparqlEndpoint}");
+				logger.debug("No application for rule {} context field and for the SPARQL endpoint {}", rule.getIri(), sparqlEndpoint);
 				return applications;
 			}
 
@@ -150,7 +148,7 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
-		ResultSet results = wrapper.executeRemoteSelectQuery(query);
+		ResultSet results = wrapper.executeSelectQuery(query);
 
 		//Save the bindings with the values for each variable
 		if( results.hasNext() ){
@@ -182,7 +180,7 @@ public class RuleApplyer {
 		List<String> variables = getVariablesFromString(rule.getContext());
 
 		//Execute the query over the SPARQL endpoint
-		ResultSet results = wrapper.executeRemoteSelectQuery(query);
+		ResultSet results = wrapper.executeSelectQuery(query);
 
 		//Save the bindings with the values for each variable
 		while( results.hasNext() ){

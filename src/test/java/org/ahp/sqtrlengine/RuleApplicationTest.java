@@ -85,9 +85,9 @@ class RuleApplicationTest {
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {
-			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("No application for rule {}  and for query file {}", rule.getIri(), queryFile);
 		} else {
-			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("{} applications for rule {}  and for query file {}", ruleApplications.size(), rule.getIri(), queryFile);
 			logger.info(ruleApplications);
 		}
 
@@ -115,9 +115,9 @@ class RuleApplicationTest {
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {
-			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("No application for rule {}  and for query file {}", rule.getIri(), queryFile);
 		} else {
-			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("{} applications for rule {}  and for query file {}", ruleApplications.size(), rule.getIri(), queryFile);
 			logger.info(ruleApplications);
 		}
 	}
@@ -139,9 +139,9 @@ class RuleApplicationTest {
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
 		if(ruleApplications.isEmpty()) {
-			logger.info("No application for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("No application for rule {}  and for query file {}", rule.getIri(), queryFile);
 		} else {
-			logger.info(ruleApplications.size() + " applications for rule " + rule.getIri() + " and for query file " + queryFile);
+			logger.info("{} applications for rule {}  and for query file {}", ruleApplications.size(), rule.getIri(), queryFile);
 			logger.info(ruleApplications);
 		}
 	}
@@ -170,7 +170,7 @@ class RuleApplicationTest {
 		assertNotEquals(0, ruleApplications.size());
 		
 		for(RuleApplication application : ruleApplications) {
-			logger.warn("Explication: " + application.getExplanation());
+			logger.warn("Explication: {}", application.getExplanation());
 			assertFalse(application.getExplanation().isBlank());
 		
 		}

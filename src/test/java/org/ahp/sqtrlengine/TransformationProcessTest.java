@@ -53,10 +53,9 @@ class TransformationProcessTest {
 		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(12, rules, query, SPARQL_ENDPOINT, true);
 		
 		transformationProcess.sortRules();
-		int i = 0;
+
 		while(transformationProcess.getNextNode() != null) {
-			i++;
-			logger.info("Tour " + i);
+
 		}
 	}
 	
@@ -74,9 +73,9 @@ class TransformationProcessTest {
 		
 		List<RuleApplication> applications = applyer.getRuleApplications(QueryUtils.parseQuery(query), rule, SPARQL_ENDPOINT);
 		
-		logger.info("Query {QueryUtils.parseQuery(query)}");
-		logger.info("Rule {rule}");
-		logger.info("SPARQL ENDPOINT {SPARQL_ENDPOINT}");
+		logger.info("Query {}", QueryUtils.parseQuery(query));
+		logger.info("Rule {}", rule);
+		logger.info("SPARQL ENDPOINT {}", SPARQL_ENDPOINT);
 		for(RuleApplication a: applications) {
 			logger.info(a);
 		}

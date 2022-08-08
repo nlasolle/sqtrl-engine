@@ -85,7 +85,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 								.orElse(null);
 						
 						if(currentRule == null) {
-							logger.info("No rule with iri {application.getRuleIri()} has been found in the rule list");
+							logger.info("No rule with iri {} has been found in the rule list", application.getRuleIri());
 							break;
 						}
 						
@@ -105,14 +105,13 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 						if(pendingNode != null) {
 							if(pruning && isQueryExisting(pendingNode.getApplication().getGeneratedQuery())) {
 								candidateExistingNode.addAppliedRuleIRI(pendingNode.getApplication().getRuleIri()); 
-								logger.info("Time to prune");
 							} else {
 								candidateNode = (TransformationNode) pendingNode.clone();
 							}
 						} 
 
-						logger.info("Pending node application {pendingNode.getApplication()}");
-						logger.info("Pending node cost {pendingNode.getGlobalCost()}");
+						logger.info("Pending node application {}", pendingNode.getApplication());
+						logger.info("Pending node cost {}", pendingNode.getGlobalCost());
 
 					}
 				}

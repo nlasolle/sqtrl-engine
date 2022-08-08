@@ -48,11 +48,9 @@ class FullTransformationProcessTest {
 		CostBasedTransformationProcess transformationProcess = new CostBasedTransformationProcess(6, rules, query, SPARQL_ENDPOINT, true);
 		
 		transformationProcess.sortRules();
-		int i = 0;
+		
 		while(transformationProcess.getNextNode() != null) {
-			i++;
-			logger.info("Tour {i}");
-			logger.info("Size of nodes {transformationProcess.getNodes().size()}");
+			logger.info("Size of nodes {}", transformationProcess.getNodes().size());
 		}
 	}
 

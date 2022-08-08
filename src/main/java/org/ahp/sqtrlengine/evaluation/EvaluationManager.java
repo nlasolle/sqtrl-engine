@@ -57,7 +57,6 @@ public class EvaluationManager {
 			if(textualDuration.equals("0") || textualDuration.equals("")) {
 				applicationTimes.add( 0.0 );
 			} else {
-				logger.warn(textualDuration);
 				double queryGenerationTime = Double.parseDouble(textualDuration);
 				applicationTimes.add( queryGenerationTime );
 			}	
@@ -81,9 +80,9 @@ public class EvaluationManager {
 		result.setAverageRuleApplicationTime(averageApplicationTime);
 		result.setGeneratedQueries(queries);
 
-		logger.warn("Full Tree time {fullTreeTime} s");
-		logger.warn("Average rule application time {averageApplicationTime} s");
-		logger.warn("#Generated queries {queries}");
+		logger.warn("Full Tree time {} s", fullTreeTime);
+		logger.warn("Average rule application time {} s", averageApplicationTime);
+		logger.warn("#Generated queries {}", queries);
 
 		return result;
 	}
@@ -138,23 +137,21 @@ public class EvaluationManager {
 		/*** Query management ***/
 		//Randomnly select the queries.
 		int i = ThreadLocalRandom.current().nextInt(1, 5);
-		logger.warn(i);
 
 		//SPARQL queries string are stored within external file
 		String smallQueryFile = "evaluation/queries/smallEvaluationQuery" + i + ".rq";
 		i = ThreadLocalRandom.current().nextInt(1, 5);
-		logger.warn(i);
+	
 		String	mediumQueryFile = "evaluation/queries/mediumEvaluationQuery" + i + ".rq";
 		i = ThreadLocalRandom.current().nextInt(1, 5);
-		logger.warn(i);
+
 		String	bigQueryFile = "evaluation/queries/bigEvaluationQuery" + i + ".rq";
 		i = ThreadLocalRandom.current().nextInt(1, 4);
 
-		logger.warn(i);
 		String dbpediaQueryFile = "evaluation/queries/dbpedia" + i + ".rq";
 
 		i = ThreadLocalRandom.current().nextInt(1, 4);
-		logger.warn(i);
+	
 		String microsoftQueryFile = "evaluation/queries/microsoft" + i + ".rq";
 
 		String smallQuery = Resources.toString(EvaluationManager.class.getClassLoader().getResource(smallQueryFile), StandardCharsets.UTF_8);
