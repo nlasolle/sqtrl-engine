@@ -1,5 +1,7 @@
 package org.ahp.sqtrlengine.dao;
 
+import org.ahp.sqtrlengine.exception.QueryException;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -51,8 +53,8 @@ public class JenaWrapper {
 	 * @param queryString the SELECT SPARQL query as a string
 	 * @return the results of the query
 	 */
-	public ResultSet executeSelectQuery(String queryString) {	
-		Query query = QueryFactory.create(queryString) ;
+	public ResultSet executeSelectQuery(String queryString) throws QueryException {	
+		Query query = QueryUtils.parseQuery(queryString) ;
 		return executeSelectQuery(query);
 	}
 
@@ -77,9 +79,8 @@ public class JenaWrapper {
 	 * @param queryString the SELECT SPARQL query as a String
 	 * @return the results of the query
 	 */
-	public Model executeConstructQuery(String queryString) {
-		Query query = QueryFactory.create(queryString) ;
-
+	public Model executeConstructQuery(String queryString) throws QueryException {
+		Query query = QueryUtils.parseQuery(queryString) ;
 		return executeConstruct(query);
 	}
 
@@ -98,8 +99,9 @@ public class JenaWrapper {
 	 * Execute an update SPARQL query using an update SPARQL endpoint
 	 * @param queryString the SPARQL query to update the graph
 	 * @return the results of the query
+	 * @throws QueryException 
 	 */
-	public void executeUpdateQuery(String queryString) {
+	public void executeUpdateQuery(String queryString) throws QueryException {
 		executeUpdateQuery(queryString, endpoint);
 	}
 
@@ -108,15 +110,20 @@ public class JenaWrapper {
 	 * @param queryString the SPARQL query to update the graph
 	 * @param the SPARQL endpoint
 	 * @return the results of the query
+	 * @throws QueryException 
 	 */
-	public void executeUpdateQuery(String queryString, String endpoint) {
+	public void executeUpdateQuery(String queryString, String endpoint) throws QueryException {
 
 		logger.info("Executing update SPARQL query:\n {}", queryString);
 
+		try {
 		UpdateRequest request = UpdateFactory.create(queryString) ;
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(request, endpoint);
-
 		processor.execute();
+		} catch (Exception e) {
+			throw new QueryException(e.getMessage());
+		}
+	
 	}
 
 	/**
@@ -136,18 +143,19 @@ public class JenaWrapper {
 	/**
 	 * Get the count of triples in the current database
 	 * @return
+	 * @throws QueryException 
 	 */
-	public int getCount() {
+	public int getCount() throws QueryException {
 
 		logger.info("Counting triple for endpoint <{}>", endpoint);
 
-		String query = "SELECT (COUNT(*) as ?c)\r\n" + 
-				"WHERE{ \r\n" + 
-				"     ?s ?p ?o.\r\n" + 
-				"  }";
+		String query = "SELECT (COUNT(*) as ?c) WHERE {\n" + 
+				"\t?s ?p ?o\n" + 
+				" }";
 
 		ResultSet results = executeSelectQuery(query);
 
 		return results.next().getLiteral("?c").getInt();
 	}
+
 }
