@@ -40,6 +40,7 @@ public class TransformationRule {
 		this.label = label;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public TransformationRule(TransformationRule rule) {
 		this.type = rule.type;
 		this.iri = rule.iri;
@@ -48,7 +49,7 @@ public class TransformationRule {
 		this.left = rule.left;
 		this.right = rule.right;
 		this.cost = rule.cost;
-		this.exceptions = (ArrayList<String>) ((ArrayList) rule.exceptions).clone();
+		this.exceptions = (ArrayList<String>) ((ArrayList<String>) rule.exceptions).clone();
 		this.explanation = rule.explanation;
 	}
 
