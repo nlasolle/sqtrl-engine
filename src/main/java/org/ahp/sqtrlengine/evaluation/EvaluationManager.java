@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.CostBasedTransformationProcess;
@@ -33,7 +34,7 @@ public class EvaluationManager {
 	private static final String RULE_FILE = "evaluation/rules/validRules.xml";
 	private static final String SPARQL_ENDPOINT = "http://localhost:3030/";
 
-	public static CombinationResult runEvaluation(ParameterCombination combination) {
+	public static CombinationResult runEvaluation(ParameterCombination combination) throws QueryException {
 		CombinationResult result = new CombinationResult();	
 		Set<Double> applicationTimes = new HashSet<>();
 		int queries = 0;

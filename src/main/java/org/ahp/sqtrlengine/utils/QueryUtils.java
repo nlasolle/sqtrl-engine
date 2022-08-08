@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
@@ -28,12 +29,19 @@ public class QueryUtils {
 	 * @param queryString the input query as a string
 	 * @return a Query object
 	 */
-	public static Query parseQuery(String queryString) {
+	public static Query parseQuery(String queryString) throws QueryException {
 		if(queryString == null || queryString.isBlank()) {
-			return new Query();
+			throw new QueryException("Null or blank SPARQL query string input.");
+		}
+		
+		Query query;
+		try {
+			query =  QueryFactory.create(queryString);
+		} catch (Exception e) {
+			throw new QueryException(e.getMessage());
 		}
 
-		return QueryFactory.create(queryString);
+		return query;
 	}
 
 
@@ -145,19 +153,19 @@ public class QueryUtils {
 		if (pattern == null || pattern.isBlank()) {
 			return false;
 		}
-		
+
 		/* We use the Jena query parser to check the given pattern.
 		   This is not ideal, we should rather find a Jena set
 		    of functions to perform the check directly on the pattern */
-		
+
 		String queryString = "";
-		
+
 		for(Prefix p : prefixes) {
 			queryString+= "PREFIX " + p.getAbbreviation() + ": <" + p.getNamespace() + ">\n";
 		}
-		
+
 		queryString += "\nSELECT * WHERE {\n\t" + pattern + "\n}";
-		
+
 		System.out.println("QUERY STRING " + queryString) ;
 		try {
 			QueryUtils.parseQuery(queryString);

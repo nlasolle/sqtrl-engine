@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.CostBasedTransformationProcess;
@@ -41,7 +42,7 @@ class FullTransformationProcessTest {
 
 	@ParameterizedTest
 	@ValueSource(strings = {"queries/fullCaseQuery.rq"})
-	void testCostBasedTransformationProcess(String queryFile) throws IOException {
+	void testCostBasedTransformationProcess(String queryFile) throws IOException, QueryException {
 		
 		String query = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
 			

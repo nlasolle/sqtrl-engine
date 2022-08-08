@@ -1,13 +1,16 @@
 package org.ahp.sqtrlengine.utils;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.apache.jena.sparql.core.Var;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,29 +30,30 @@ class QueryUtilsTest {
 	 */
 	private static List<Prefix> getPrefixes(){
 		List<Prefix> prefixes = new ArrayList<Prefix>();
-		
+
 		prefixes.add(new Prefix("http://www.w3.org/2000/01/rdf-schema#", "rdfs"));
-		
+
 		return prefixes;
 	}
-	
-	private static Stream<String> getQueries() {
-		return Stream.of(null, 
-				"", 
-				" ", 
-				"SELECT ?p WHERE {?s ?p ?o}", 
-				"SELECT ?pWHERE{}"
+
+	private static Stream<Arguments> getQueries() {
+		return Stream.of(Arguments.of(null, true),
+				Arguments.of("", true),
+				Arguments.of(" ", true),
+				Arguments.of("Some text which is not SPARQL syntax friendly", true),
+				Arguments.of("SELECT ?p WHERE {?s ?p ?o}", false), 
+				Arguments.of("SELECT ?pWHERE{}", false)
 				);
 	}
 
 	private static Stream<Arguments> getQueriesForVariablesExtraction() {
 		return Stream.of(
-				Arguments.of(null, 0, null, null),
-				Arguments.of("", 0, null, null),
-				Arguments.of(" ", 0, null, null),
-				Arguments.of("SELECT ?p WHERE {?s ?p ?o}", 1, "?p", null), 
-				Arguments.of("SELECT ?s ?p ?o WHERE{}", 3, "?s", "?p"),
-				Arguments.of("SELECT * WHERE{}", 0, null, null)
+				Arguments.of(null, 0, null, null, true),
+				Arguments.of("", 0, null, null, true),
+				Arguments.of(" ", 0, null, null, true),
+				Arguments.of("SELECT ?p WHERE {?s ?p ?o}", 1, "?p", null, false), 
+				Arguments.of("SELECT ?s ?p ?o WHERE{}", 3, "?s", "?p", false),
+				Arguments.of("SELECT * WHERE{}", 0, null, null, false)
 				);
 	}
 
@@ -71,23 +75,43 @@ class QueryUtilsTest {
 
 	@ParameterizedTest
 	@MethodSource("getQueries")
-	void testParseQuery(String query) {
-		assertNotNull(QueryUtils.parseQuery(query));
+	void testParseQuery(String query, boolean exception) {
+		
+		if(exception) {
+			assertThrows(QueryException.class, () -> {
+				QueryUtils.parseQuery(query);
+			});
+		} else {
+			assertDoesNotThrow(() -> {
+				assertNotNull(QueryUtils.parseQuery(query));
+			});
+		}
+
 	}
 
 	@ParameterizedTest
 	@MethodSource("getQueriesForVariablesExtraction")
-	void testExtractSelectVariables(String query, int size, String var1, String var2) {
-		List<Var> variables = QueryUtils.extractSelectVariables(QueryUtils.parseQuery(query));
+	void testExtractSelectVariables(String query, int size, String var1, String var2, boolean exception) {
+		
+		if(exception) {
+			assertThrows(QueryException.class, () -> {
+				QueryUtils.extractSelectVariables(QueryUtils.parseQuery(query));
+			});
+		} else {
+			assertDoesNotThrow(() -> {
+				List<Var> variables; variables = QueryUtils.extractSelectVariables(QueryUtils.parseQuery(query));
+				assertEquals(size, variables.size());
 
-		assertEquals(size, variables.size());
-
-		if(variables.size() >= 2) {
-			assertEquals(var1, variables.get(0).toString());
-			assertEquals(var2, variables.get(1).toString());
-		} else if (variables.size() == 1) {
-			assertEquals(var1, variables.get(0).toString());
+				if(variables.size() >= 2) {
+					assertEquals(var1, variables.get(0).toString());
+					assertEquals(var2, variables.get(1).toString());
+				} else if (variables.size() == 1) {
+					assertEquals(var1, variables.get(0).toString());
+				}
+				
+			});
 		}
+		
 	}
 
 	@ParameterizedTest

@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ahp.sqtrlengine.dao.JenaWrapper;
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.utils.QueryUtils;
@@ -52,7 +53,13 @@ public class RuleApplyer {
 		//First situation, rule context is not empty
 		if(!rule.getContext().isEmpty()) {
 		
-			List<HashMap<String, String>> contextBindingsList = getContextBindings(rule, sparqlEndpoint);
+			List<HashMap<String, String>> contextBindingsList;
+			try {
+				contextBindingsList = getContextBindings(rule, sparqlEndpoint);
+			} catch (QueryException e) {
+				e.printStackTrace();
+				return applications;
+			}
 
 			if(contextBindingsList.isEmpty()) {
 				logger.debug("No application for rule {} context field and for the SPARQL endpoint {}", rule.getIri(), sparqlEndpoint);
@@ -148,7 +155,14 @@ public class RuleApplyer {
 		}
 
 		query+= varsPattern + " {\n" + graphPattern + "}";
-		ResultSet results = wrapper.executeSelectQuery(query);
+		ResultSet results;
+		
+		try {
+			results = wrapper.executeSelectQuery(query);
+		} catch (QueryException e) {
+			e.printStackTrace();
+			return;
+		}
 
 		//Save the bindings with the values for each variable
 		if( results.hasNext() ){
@@ -171,8 +185,9 @@ public class RuleApplyer {
 	 * Generate and execute a SPARQL to find context bindings for the given transformation rule and RDFS base
 	 * @param rule a SQTRL rule
 	 * @param sparqlEndpoint
+	 * @throws QueryException 
 	 */
-	public List<HashMap<String, String>> getContextBindings(TransformationRule rule, String sparqlEndpoint) {
+	public List<HashMap<String, String>> getContextBindings(TransformationRule rule, String sparqlEndpoint) throws QueryException {
 		List<HashMap<String, String>> bindings = new ArrayList<>();
 
 		String query = generateContextQuery(rule);
@@ -551,7 +566,12 @@ public class RuleApplyer {
 		}
 
 		generatedQuery.setQueryPattern(fullGraphPattern);
-		generatedQuery = QueryUtils.parseQuery(generatedQuery.toString());
+		try {
+			generatedQuery = QueryUtils.parseQuery(generatedQuery.toString());
+		} catch (QueryException e) {
+			e.printStackTrace();
+			return;
+		}
 		application.setGeneratedQuery(generatedQuery);
 	}
 

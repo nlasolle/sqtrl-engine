@@ -3,6 +3,7 @@ package org.ahp.sqtrlengine.service;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationNode;
 import org.ahp.sqtrlengine.model.TransformationRule;
@@ -20,7 +21,7 @@ public class CostBasedTransformationProcess extends TransformationProcess {
 	private double maxCost;
 
 	public CostBasedTransformationProcess(double maxCost, List<TransformationRule> rules,
-			String query, String sparqlEndpoint, boolean pruning) {
+			String query, String sparqlEndpoint, boolean pruning) throws QueryException {
 		super(rules, query, sparqlEndpoint);
 		this.maxCost = maxCost;
 		this.pruning = pruning;

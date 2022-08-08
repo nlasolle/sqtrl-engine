@@ -3,6 +3,7 @@ package org.ahp.sqtrlengine.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.TransformationNode;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.utils.QueryUtils;
@@ -28,7 +29,7 @@ public abstract class TransformationProcess {
 	
 	protected List<TransformationNode> nodes = new ArrayList<>();
 	
-	protected TransformationProcess(List<TransformationRule> rules, String query, String sparqlEndpoint) {
+	protected TransformationProcess(List<TransformationRule> rules, String query, String sparqlEndpoint) throws QueryException {
 		this.rules = rules;
 		this.query = QueryUtils.parseQuery(query);
 		this.sparqlEndpoint = sparqlEndpoint;

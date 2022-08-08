@@ -8,10 +8,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.exception.QueryException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
@@ -58,8 +58,12 @@ class RuleApplicationTest {
 
 
 		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
-		List<HashMap<String, String>> bindings = ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
-		logger.debug(bindings);
+		
+		try {
+			ruleApplyer.getContextBindings(rule, SPARQL_ENDPOINT);
+		} catch (QueryException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -79,7 +83,14 @@ class RuleApplicationTest {
 				.orElse(null);
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		Query query = QueryUtils.parseQuery(queryAsString);
+		Query query;
+
+		try {
+			query = QueryUtils.parseQuery(queryAsString);
+		} catch (QueryException e) {
+			assert(false);
+			return;
+		}
 
 		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
@@ -109,7 +120,14 @@ class RuleApplicationTest {
 				.orElse(null);
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		Query query = QueryUtils.parseQuery(queryAsString);
+		Query query;
+
+		try {
+			query = QueryUtils.parseQuery(queryAsString);
+		} catch (QueryException e) {
+			assert(false);
+			return;
+		}
 
 		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
@@ -121,7 +139,7 @@ class RuleApplicationTest {
 			logger.info(ruleApplications);
 		}
 	}
-	
+
 	@ParameterizedTest
 	@CsvSource({
 		"http://sqtrl-rules/ahpo/1, queries/generic1.rq",
@@ -133,7 +151,13 @@ class RuleApplicationTest {
 				.orElse(null);
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		Query query = QueryUtils.parseQuery(queryAsString);
+		Query query;
+		try {
+			query = QueryUtils.parseQuery(queryAsString);
+		} catch (QueryException e) {
+			assert(false);
+			return;
+		}
 
 		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
@@ -145,7 +169,7 @@ class RuleApplicationTest {
 			logger.info(ruleApplications);
 		}
 	}
-	
+
 	@ParameterizedTest
 	@CsvSource({
 		"http://sqtrl-rules/generic/1, queries/ahpo3.rq",
@@ -160,21 +184,28 @@ class RuleApplicationTest {
 				.orElse(null);
 
 		String queryAsString = Resources.toString(getClass().getClassLoader().getResource(queryFile), StandardCharsets.UTF_8);
-		Query query = QueryUtils.parseQuery(queryAsString);
+		Query query;
+
+		try {
+			query = QueryUtils.parseQuery(queryAsString);
+		} catch (QueryException e) {
+			assert(false);
+			return;
+		}
 
 		RuleApplyer ruleApplyer = new RuleApplyer(SPARQL_ENDPOINT);
 		List<RuleApplication> ruleApplications = ruleApplyer.getRuleApplications(query, rule, SPARQL_ENDPOINT);
 
-		
+
 		assertNotNull(ruleApplications);
 		assertNotEquals(0, ruleApplications.size());
-		
+
 		for(RuleApplication application : ruleApplications) {
 			logger.warn("Explication: {}", application.getExplanation());
 			assertFalse(application.getExplanation().isBlank());
-		
+
 		}
 
 	}
-	
+
 }
