@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.exception.QueryException;
+import org.ahp.sqtrlengine.exception.RuleException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.RuleApplication;
 import org.ahp.sqtrlengine.model.TransformationRule;
@@ -35,7 +36,7 @@ class TransformationProcessTest {
 	private static final String SPARQL_ENDPOINT = "http://localhost:3030/full_ahp_corpus";
 
 	@BeforeAll
-	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException {
+	static void prepareTransformationRules() throws FileNotFoundException, IOException, InvalidRuleFileException, RuleException {
 		File validFile = new File(TransformationProcessTest.class.getClassLoader().getResource(RULE_FILE).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser(validFile);

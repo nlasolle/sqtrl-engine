@@ -1,0 +1,8 @@
+PREFIX ahpo: <http://e-hp.ahp-numerique.fr/ahpo#>
+
+SELECT ?l ?d
+WHERE {
+	?l ahpo:sentBy <http://henripoincare.fr/api/items/843> .
+	?l ahpo:writingDate ?d . 
+	FILTER (YEAR(?d) >= 1880 && YEAR(?d) <= 1900)
+}

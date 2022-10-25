@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.exception.RuleException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.JSONRuleParser;
@@ -85,7 +86,7 @@ class RuleParserTest {
 	
 	@ParameterizedTest
 	@CsvSource({"validRules.xml, 20"})
-	void testXMLRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException {
+	void testXMLRuleParsing(String fileName, int numberOfRules) throws IOException, InvalidRuleFileException, RuleException {
 		File validFile = new File(getClass().getClassLoader().getResource(fileName).getFile());
 
 		XMLRuleParser parser = new XMLRuleParser(validFile);

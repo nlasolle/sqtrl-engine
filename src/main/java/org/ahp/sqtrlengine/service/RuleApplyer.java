@@ -45,6 +45,63 @@ public class RuleApplyer {
 		wrapper = new JenaWrapper(endpoint);
 	}
 
+	public List<RuleApplication> getRuleApplicationsAlternative(Query query, TransformationRule rule, String sparqlEndpoint){
+		logger.debug("Searching for applications for rule {}", rule.getIri());
+
+		List<RuleApplication> applications = new ArrayList<>(); 
+
+		//First situation, rule context is not empty
+		if(!rule.getContext().isEmpty()) {
+		
+			List<HashMap<String, String>> contextBindingsList;
+			try {
+				contextBindingsList = getContextBindings(rule, sparqlEndpoint);
+			} catch (QueryException e) {
+				e.printStackTrace();
+				return applications;
+			}
+
+			if(contextBindingsList.isEmpty()) {
+				logger.debug("No application for rule {} context field and for the SPARQL endpoint {}", rule.getIri(), sparqlEndpoint);
+				return applications;
+			}
+
+			for(HashMap<String, String> contextBindings : contextBindingsList) {
+				//retrieveLeftBindings(rule, application);
+				List<RuleApplication> tempApplications = retrieveLeftBindingsBis(rule, query, contextBindings);
+
+				if(tempApplications.isEmpty()) {
+					continue;
+				}
+
+				for(RuleApplication application : tempApplications) {
+					getBoundRightTriples(rule, application);
+					applyTransformation(application);
+					generateExplanation(rule, application, sparqlEndpoint);
+				}
+
+				applications.addAll(tempApplications);
+			}
+
+		} 
+		//Empty rule context
+		else {
+			//retrieveLeftBindings(rule, application);
+			applications = retrieveLeftBindingsBis(rule, query, new HashMap<String, String>());
+			if(applications.isEmpty()) {
+				return applications;
+			}
+
+			for(RuleApplication application : applications) {
+				getBoundRightTriples(rule, application);
+				applyTransformation(application);
+				generateExplanation(rule, application, sparqlEndpoint);
+			}
+
+		}
+		return applications;
+	}
+	
 	public List<RuleApplication> getRuleApplications(Query query, TransformationRule rule, String sparqlEndpoint){
 		logger.debug("Searching for applications for rule {}", rule.getIri());
 
@@ -350,7 +407,6 @@ public class RuleApplyer {
 
 		for(Triple queryTriple : queryTriples) {
 			model.getGraph().add(queryTriple);
-
 		}
 
 		String leftAsString = "";

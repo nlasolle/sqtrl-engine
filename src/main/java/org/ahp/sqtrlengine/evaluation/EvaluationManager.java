@@ -14,6 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.exception.QueryException;
+import org.ahp.sqtrlengine.exception.RuleException;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
 import org.ahp.sqtrlengine.service.CostBasedTransformationProcess;
@@ -93,8 +94,9 @@ public class EvaluationManager {
 	 * @return list of parameter combination
 	 * @throws InvalidRuleFileException 
 	 * @throws IOException 
+	 * @throws RuleException 
 	 */
-	public static List<ParameterCombination> prepareEvaluation() throws InvalidRuleFileException, IOException {
+	public static List<ParameterCombination> prepareEvaluation() throws InvalidRuleFileException, IOException, RuleException {
 		List<ParameterCombination> combinations = new ArrayList<>();
 
 		/*** Rule file management ****/

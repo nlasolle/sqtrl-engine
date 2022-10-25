@@ -14,8 +14,12 @@ import javax.xml.validation.Validator;
 
 import org.ahp.sqtrlengine.exception.InvalidFileTypeException;
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
+import org.ahp.sqtrlengine.exception.QueryException;
+import org.ahp.sqtrlengine.exception.RuleException;
+import org.ahp.sqtrlengine.model.FilteringTransformationRule;
 import org.ahp.sqtrlengine.model.Prefix;
 import org.ahp.sqtrlengine.model.TransformationRule;
+import org.ahp.sqtrlengine.utils.QueryUtils;
 import org.ahp.sqtrlengine.utils.RuleUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +63,7 @@ public class XMLRuleParser implements RuleParser {
 		}
 
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		
+
 		// to be compliant, completely disable DOCTYPE declaration:
 		try {
 			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -68,7 +72,7 @@ public class XMLRuleParser implements RuleParser {
 		} catch (SAXNotSupportedException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		Schema schema;
 
 		try {
@@ -97,11 +101,11 @@ public class XMLRuleParser implements RuleParser {
 	}
 
 	@Override
-	public List<TransformationRule> parseRuleFile() throws InvalidRuleFileException {
+	public List<TransformationRule> parseRuleFile() throws InvalidRuleFileException, RuleException {
 
 		List<TransformationRule> rules = new ArrayList<>(); 
 		List<String> existingIri = new ArrayList<>();
-		
+
 		TransformationRule rule;//To store each new rule
 
 		//Get all the elements
@@ -113,41 +117,42 @@ public class XMLRuleParser implements RuleParser {
 		for (int i = 0; i < elements.size(); i++) {  
 			rule = new TransformationRule();
 			Element ruleElement = elements.get(i);
-			
+
 			//First check, iri must be unique. If not, we skip the rule
 			if(rule.getIri() != null && existingIri.contains(rule.getIri())) {
 				logger.info("A rule with iri {} has already been defined. Skipping this rule.", rule.getIri());
 				break;
 			}
 
-			if(ruleElement.getName().equals("rule")){
-				rule.setType("classic");
-				rule.setIri(ruleElement.getAttributeValue("iri"));
-				rule.setLabel(ruleElement.getAttributeValue("label"));
-				if(ruleElement.getChildren("context") != null) rule.setContext(ruleElement.getChild("context").getText());
-				rule.setLeft(ruleElement.getChild("left").getText());
-				rule.setRight(ruleElement.getChild("right").getText());
-				if(ruleElement.getChildren("cost") != null) rule.setCost(Float.parseFloat(ruleElement.getChild("cost").getText()));	
-				if(ruleElement.getChildren("explanation") != null) rule.setExplanation(ruleElement.getChild("explanation").getText());	
+
+			rule.setIri(ruleElement.getAttributeValue("iri"));
+			rule.setLabel(ruleElement.getAttributeValue("label"));
+			if(ruleElement.getChildren("context") != null) rule.setContext(ruleElement.getChild("context").getText());
+			rule.setLeft(ruleElement.getChild("left").getText());
+			rule.setRight(ruleElement.getChild("right").getText());
+			if(ruleElement.getChildren("cost") != null) rule.setCost(Float.parseFloat(ruleElement.getChild("cost").getText()));	
+			if(ruleElement.getChildren("explanation") != null) rule.setExplanation(ruleElement.getChild("explanation").getText());	
 
 
-				if(ruleElement.getChildren("exception") != null){
-					List<String> exceptions = new ArrayList<>();
+			if(ruleElement.getChildren("exception") != null){
+				List<String> exceptions = new ArrayList<>();
 
-					for(Element element : ruleElement.getChildren("exception")) {
-						exceptions.add(element.getText());
-					}
-
-					rule.setExceptions(exceptions );
+				for(Element element : ruleElement.getChildren("exception")) {
+					exceptions.add(element.getText());
 				}
 
-			} else {
-				rule.setType("special");
-				rule.setIri(ruleElement.getAttributeValue("iri"));
-				//rule.setLower(Integer.parseInt(ruleElement.getChild("lower").getText()));
-				//rule.setHigher(Integer.parseInt(ruleElement.getChild("higher").getText()));
-				rule.setCost(Float.parseFloat(ruleElement.getChild("cost").getText()));
-				rule.setExplanation(ruleElement.getChild("explanation").getText());	
+				rule.setExceptions(exceptions );
+			}
+
+			if(ruleElement.getName().equals("filteringRule")) {
+				FilteringTransformationRule filteringRule = (FilteringTransformationRule) rule;
+				try {
+					filteringRule.setLeftFilter(QueryUtils.parseExpressions(ruleElement.getAttributeValue("leftFilter")));
+					filteringRule.setRightFilter(QueryUtils.parseExpressions(ruleElement.getAttributeValue("rightFilter")));
+				} catch (QueryException e) {
+					throw new RuleException(e.getMessage());
+				}
+				
 			}
 
 			rules.add(RuleUtils.formatRule(rule));

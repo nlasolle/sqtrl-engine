@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ahp.sqtrlengine.exception.InvalidRuleFileException;
 import org.ahp.sqtrlengine.exception.QueryException;
+import org.ahp.sqtrlengine.exception.RuleException;
 /**
  * Launcher for a technical evaluation of the SQTR engine
  * @author Nicolas Lasolle
@@ -13,7 +14,7 @@ import org.ahp.sqtrlengine.exception.QueryException;
  */
 public class EvaluationLauncher {
 
-	public static void main(String [] args) throws InvalidRuleFileException, IOException, QueryException {
+	public static void main(String [] args) throws InvalidRuleFileException, IOException, QueryException, RuleException {
 		//First, the goal is to construct the full list of parameter combination (16 combinations for this evaluation)
 		List<ParameterCombination> combinations = EvaluationManager.prepareEvaluation();
 		List<CombinationResult> results = new ArrayList<>();
